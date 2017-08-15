@@ -1,1 +1,1 @@
-{"data":[{"champion":"Sona","lane":"Top"},{"champion":"Sona","lane":"Top"}]}
+{"data":[]}

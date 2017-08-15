@@ -8,7 +8,7 @@ module.exports.query = function query(r, a, s, w) {
 		const header = {	
 							"Origin": null,
 							"Accept-Charset": "application/x-www-form-urlencoded; charset=UTF-8",
-							"X-Riot-Token": "RGAPI-0a712bf5-f9f8-4366-8bfb-bbdd93a4bd7f",
+							"X-Riot-Token": "RGAPI-148b4411-582c-4e94-b156-a1d6ad218308",
 							"Accept-Language": "en-US,en;q=0.5",
 						}
 
@@ -22,6 +22,7 @@ module.exports.query = function query(r, a, s, w) {
 		let data = ""
 		const request = https.request(options, (res) => {
 			if (res.statusCode == 404 || res.statusCode == 400) resolve(new Array("summoner not found", w, r))
+			if (res.statusCode == 403) resolve(new Array("riot developer key expired", w , r))
 			res.on('data', (d) => {
 				data += d
 			})

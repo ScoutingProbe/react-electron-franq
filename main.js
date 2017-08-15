@@ -4,9 +4,13 @@ const url = require('url')
 const fs = require('fs')
 const summoner = require('./back/summoner.js')
 const location = require('./back/location.js')
-const getChampion = require('./back/getChampion.js')
+const getStatic = require('./back/getStatic.js')
 const setChampion = require('./back/setChampion.js')
+const getChampion = require('./back/getChampion.js')
+const deleteChampion = require('./back/deleteChampion.js')
 const static = require("./back/static.js")
+const write = require("./championselect/write.js")
+const op = require("./op/op.js")
 
 let win
 
@@ -55,6 +59,10 @@ app.on('ready', ()=>{
 	})
 })
 
+// app.on('ready', ()=>{
+// 	op.initial()
+// })
+
 app.on('window-all-closed', () => {
 	app.quit()
 })
@@ -78,22 +86,24 @@ ipcMain.on('location-submit', (e, l) => {
 })
 
 
-ipcMain.on('champion-store', (e, l, c)=>{
-	setChampion.read(new Array(l, c))
-	.then(setChampion.push)
-	.then(setChampion.write)
+ipcMain.on('champion-store', (error, lane, championName)=>{
+	setChampion.initial(new Array(lane, championName, win))
+})
+
+ipcMain.on('champion-input', ()=>{
+	getStatic.read(win)
+	.then(getStatic.error)
+	.then(getStatic.keys)
+	.then(getStatic.inform)
 	.catch((error)=>{
 		console.log(error)
 	})
 })
 
-ipcMain.on('champion-input', ()=>{
-	//rename to championInput.js
-	getChampion.read(win)
-	.then(getChampion.error)
-	.then(getChampion.keys)
-	.then(getChampion.inform)
-	.catch((error)=>{
-		console.log(error)
-	})
+ipcMain.on('champion-delete', (error, lane, champion)=>{
+	deleteChampion.initial(new Array(lane, champion, win))
+})
+
+ipcMain.on('champion-ask', (error)=>{
+	getChampion.initial(win)
 })

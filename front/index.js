@@ -17,6 +17,13 @@ $(document).ready(function(){
 	$("#champion-text").on('input',()=>{
 		ipcRenderer.send('champion-input')
 	})
+
+	$("#lane").on('input',()=>{
+		ipcRenderer.send('champion-input')
+	})
+
+	ipcRenderer.send('champion-ask')
+
 })
 
 ipcRenderer.on("summoner-inform", (e, j) => {
@@ -31,7 +38,7 @@ ipcRenderer.on("location-inform", (e, m) => {
 	else if(m == "file not found") $("#feedback-location").html("&#10007;")
 })
 
-ipcRenderer.on("champion-inform", (e,j)=>{
+ipcRenderer.on("static-inform", (e,j)=>{
 	let a = $("#lane option:selected").text()
 
 	let c = $("#champion-text").val()
@@ -62,4 +69,17 @@ ipcRenderer.on("champion-inform", (e,j)=>{
 
 function sendChampion(l, c){
 	ipcRenderer.send('champion-store', l, c)
+}
+
+ipcRenderer.on("champion-inform", (error, champions)=>{
+	let data = champions.data
+	data = data.map((champ)=>{
+		return `<p>lane: ${champ.lane}, champion: ${champ.champion}</p>
+				<button onClick='deleteChampion("${champ.lane}", "${champ.champion}")'>Delete</button>`
+	})
+	$("#roles").html(data)
+})
+
+function deleteChampion(lane, champion){
+	ipcRenderer.send('champion-delete', lane, champion)
 }
