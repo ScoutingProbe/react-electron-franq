@@ -7,6 +7,7 @@ const location = require('./back/location.js')
 const getStatic = require('./back/getStatic.js')
 const setChampion = require('./back/setChampion.js')
 const getChampion = require('./back/getChampion.js')
+const createChampion = require('./back/createChampion.js')
 const deleteChampion = require('./back/deleteChampion.js')
 const static = require("./back/static.js")
 const write = require("./championselect/write.js")
@@ -42,21 +43,11 @@ app.on('ready', () => {
 })
 
 app.on('ready', ()=>{
-	static.check(win)
-	.then(static.getTime)
-	.then(static.getRegion)
-	.then(static.request)
-	.then(static.update)
-	.catch((error)=>{
-		console.log(error)
-	})
+	static.initial(win)
 })
 
 app.on('ready', ()=>{
-	setChampion.check()
-	.catch((error)=>{
-		console.log(err)
-	})
+	createChampion.initial()
 })
 
 // app.on('ready', ()=>{
@@ -67,22 +58,12 @@ app.on('window-all-closed', () => {
 	app.quit()
 })
 
-ipcMain.on('summoner-submit', (event, r, a, s) => {
-	summoner.query(r, a, s, win)
-	.then(summoner.inform)
-	.then(summoner.store)
-	.catch((e) => {
-		console.log(e.message)
-	})
+ipcMain.on('summoner-submit', (event, region, account, summ) => {
+	summoner.initial(region, account, summ, win)
 })
 
-ipcMain.on('location-submit', (e, l) => {
-	location.confirm(l, win)
-	.then(location.inform)
-	.then(location.store)
-	.catch((e) => {
-		console.log(e.message)
-	})
+ipcMain.on('location-submit', (event, loc) => {
+	location.initial(loc, win)
 })
 
 
@@ -91,13 +72,7 @@ ipcMain.on('champion-store', (error, lane, championName)=>{
 })
 
 ipcMain.on('champion-input', ()=>{
-	getStatic.read(win)
-	.then(getStatic.error)
-	.then(getStatic.keys)
-	.then(getStatic.inform)
-	.catch((error)=>{
-		console.log(error)
-	})
+	getStatic.initial(win)
 })
 
 ipcMain.on('champion-delete', (error, lane, champion)=>{

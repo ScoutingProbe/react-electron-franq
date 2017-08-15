@@ -1,7 +1,16 @@
 const https = require('https')
 const fs = require('fs')
 
-module.exports.query = function query(r, a, s, w) {
+module.exports.initial = function initial(region, account, summoner, win){
+	query(region, account, summoner, win)
+	.then(write)
+	.then(inform)
+	.catch((error) => {
+		console.log(error)
+	})
+}
+
+function query(region, account, summoner, win) {
 	return new Promise((resolve, reject) => {		
 		const url = "https://na1.api.riotgames.com/lol/summoner/v3/summoners/by-name/"
 
@@ -13,33 +22,35 @@ module.exports.query = function query(r, a, s, w) {
 						}
 
 		const options = {
-							"hostname": setRegion(r),
-							"path": `/lol/summoner/v3/summoners/${setQuery(a)}${s}`,
+							"hostname": setRegion(region),
+							"path": `/lol/summoner/v3/summoners/${setQuery(account)}${summoner}`,
 							"headers": header,
 							"agent": false,
 						}
 
-		let data = ""
-		const request = https.request(options, (res) => {
-			if (res.statusCode == 404 || res.statusCode == 400) resolve(new Array("summoner not found", w, r))
-			if (res.statusCode == 403) resolve(new Array("riot developer key expired", w , r))
-			res.on('data', (d) => {
-				data += d
+		const request = https.request(options, (response) => {
+			if (response.statusCode == 404 || response.statusCode == 400) {
+				return resolve(new Array("summoner not found", win, region))
+			}
+			if (response.statusCode == 403) return resolve(new Array("riot developer key expired", win , region))
+			let data = ""
+			response.on('data', (chunk) => {
+				data += chunk
 			})
-			res.on('end', () => {
+			response.on('end', () => {
 				data = JSON.parse(data)
-				resolve(new Array(data, w, r))				
+				resolve(new Array(data, win, region))				
 			})
 		})
-		.on('error', (e) => {
-			reject(e)
+		.on('error', (error) => {
+			reject(error)
 		})
 		request.end()
 	})
 }
 
-function setQuery(a) {
-	switch (a) {
+function setQuery(account) {
+	switch (account) {
 		case "Account id":
 			return "by-account/"
 		case "Summoner name": 
@@ -49,8 +60,8 @@ function setQuery(a) {
 	}
 }
 
-function setRegion(r) {
-	switch (r) {
+function setRegion(region) {
+	switch (region) {
 		case "RU":
 			return "ru.api.riotgames.com"
 		case "KR":
@@ -76,19 +87,24 @@ function setRegion(r) {
 	}
 }
 
-module.exports.inform = function inform(j) {
-	return new Promise((res, rej) => {
-		j[1].webContents.send("summoner-inform", j[0])
-		res(j)	
+// array[0] = summoner json
+// array[1] = window
+// array[2] = region
+function write(array){
+	return new Promise((resolve, reject) => {
+		let s = JSON.stringify(array[0]) + "\n" + array[2]
+		fs.writeFile('./txt/summoner.txt', s, (error) => {
+			if (error) reject(error)
+			else resolve(new Array(array[0], array[1]))
+		})
 	})
 }
 
-module.exports.store = function store(j){
-	return new Promise((res, rej) => {
-		let s = JSON.stringify(j[0]) + "\n" + j[2]
-		fs.writeFile('./txt/summoner.txt', s, (err) => {
-			if (err) rej(err)
-			else res()
-		})
+// array[0] = summoner json
+// array[1] = window
+function inform(array) {
+	return new Promise((resolve, reject) => {
+		array[1].webContents.send("summoner-inform", array[0])
+		resolve()	
 	})
 }

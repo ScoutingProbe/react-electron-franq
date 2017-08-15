@@ -1,38 +1,49 @@
 const fs = require('fs')
 const https = require('https')
 
-module.exports.check = function check(w){
+module.exports.initial = function initial(win){
+	check(win)
+	.then(getTime)
+	.then(getRegion)
+	.then(request)
+	.then(write)
+	.catch((error)=>{
+		console.log(error)
+	})
+}
+
+function check(win){
 	return new Promise((resolve,reject)=> {
 		fs.readFile("./txt/static.txt", (error, data)=> {
 			if (error) {
 				if (error.code == "ENOENT") {
-					create(w)
-					.then((w)=>{
-						resolve(w)
+					create(win)
+					.then((win)=>{
+						resolve(win)
 					})
 				}
 				else reject(error)	
 			}
 			else {
-				resolve(w)
+				resolve(win)
 			}
 		})
 	})
 }
 
-function create(w) {
+function create(win) {
 	return new Promise((resolve,reject)=>{
 		let s = "\n" + (Date.now() - 3600000)
 		fs.writeFile("./txt/static.txt", s, (error)=>{
 			if (error) reject(error)
 			else {
-				resolve(w)
+				resolve(win)
 			}
 		})
 	})
 }
 
-module.exports.getTime = function getTime(w) {
+function getTime(win) {
 	return new Promise((resolve, reject)=>{
 		fs.readFile("./txt/static.txt", (error,data)=>{
 			if (error) reject(error)
@@ -48,30 +59,30 @@ module.exports.getTime = function getTime(w) {
 				if (d < 3600000) {
 					reject(new Error("Riot static limit"))
 				}
-				else resolve(w)
+				else resolve(win)
 			}
 		})
 	})
 }
 
-module.exports.getRegion = function getRegion(w){
+function getRegion(win){
 	return new Promise((resolve, reject) => {
-		fs.readFile("./txt/summoner.txt", (error, data) => {
+		fs.readFile("./txt/summoner.txt", 'utf-8', (error, data) => {
 			if (error) reject(error)
 			else {
-				let r = data.toString()
-				r = r.slice(r.indexOf("\n"))
-				r = r.replace("\n", "")
-				resolve(new Array(r, w))
+				data = data.slice(data.indexOf("\n"))
+				data = data.replace("\n", "")
+				resolve(new Array(data, win))
 			}
 		})	
 	})
 }
 
-module.exports.request = function request(a){
+//array[0] = region
+//array[1] = win
+function request(array){
 	return new Promise((resolve, reject) => {
-		const url = "https://na1.api.riotgames.com/lol/static-data/v3/champions?locale=en_US&tags=image&dataById=false"
-
+		//const url = "https://na1.api.riotgames.com/lol/static-data/v3/champions?locale=en_US&tags=image&dataById=false"
 		const header = {	
 							"Origin": null,
 							"Accept-Charset": "application/x-www-form-urlencoded; charset=UTF-8",
@@ -80,23 +91,22 @@ module.exports.request = function request(a){
 						}
 
 		const options = {
-							"hostname": setRegion(a[0]),
+							"hostname": setRegion(array[0]),
 							"path": "/lol/static-data/v3/champions?locale=en_US&tags=image&dataById=false",
 							"headers": header,
 							"agent": false,
 						}
-		let data = ""
 		const request = https.request(options, (response) => {
-			response.on('data', (d) => {
-				data += d
+			let data = ""
+			response.on('data', (chunk) => {
+				data += chunk
 			})
 			response.on('end', () => {
-				data = JSON.parse(data)
-				resolve(new Array(data, a[1]))
+				resolve(new Array(JSON.parse(data), array[1]))
 			})
 		})
-		.on('error', (e) => {
-			reject(e)
+		.on('error', (error) => {
+			reject(error)
 		})
 		request.end()
 	})
@@ -129,13 +139,15 @@ function setRegion(r) {
 	}
 }
 
-module.exports.update = function update(a){
+//array[0] = json
+//array[1] = win
+function write(array){
 	return new Promise((resolve, reject) => {
-		let s = JSON.stringify(a[0])
+		let s = JSON.stringify(array[0])
 		s += "\n" + Date.now()
 		fs.writeFile("./txt/static.txt", s, (error) => {
 			if (error) reject(error)
-			else resolve(a)
+			else resolve()
 		})
 	})
 }

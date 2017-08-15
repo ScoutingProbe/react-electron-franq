@@ -1,31 +1,5 @@
 const fs = require('fs')
 
-module.exports.check = function check(c){
-	return new Promise((resolve,reject)=>{
-		fs.open("./txt/champion.txt", "r", (e, d)=>{
-			if (e) {
-				if (e.code == "ENOENT"){
-					create(c)
-					.then(resolve)
-				}
-				else reject(e)
-			}
-			else {
-				resolve(c)
-			}
-		})
-	})
-}
-
-function create(c){
-	return new Promise((resolve,reject)=>{
-		fs.writeFile("./txt/champion.txt", JSON.stringify({"data": []}), (e)=>{
-			if (e) reject(e)
-			else resolve(c)
-		})
-	})
-}
-
 // array[0] = lane
 // array[1] = championName
 // array[2] = window

@@ -1,37 +1,37 @@
 const fs = require('fs')
 
-module.exports.read = function read(w){
+module.exports.initial = function initial(win){
+	read(win)
+	.then(error)
+	.then(inform)
+	.catch((error)=>{
+		console.log(error)
+	})
+}
+
+function read(win){
 	return new Promise((resolve,reject)=>{
-		fs.readFile("./txt/static.txt", (error,data)=>{
+		fs.readFile("./txt/static.txt", 'utf-8', (error,json)=>{
 			if (error) reject(error)
 			else {
-				let s = data.toString()
-				s = s.slice(0, s.lastIndexOf("\n"))
-				s = JSON.parse(s)
-				resolve(new Array(s, w))
+				json = json.slice(0, json.lastIndexOf("\n"))
+				json = JSON.parse(json)
+				resolve(new Array(Object.keys(json.data), win))
 			}
 		})
 	})
 }
 
-module.exports.error = function error(a){
+function error(array){
 	return new Promise((resolve,reject)=>{
-		if (Object.keys(a[0]).includes("status")) reject(new Error("Static file stale with error"))
-		else resolve(a)
+		if (Object.keys(array[0]).includes("status")) reject(new Error("getStatic.js: Static file stale with error"))
+		else resolve(array)
 	})
 }
 
-module.exports.keys = function keys(a){
+function inform(array){
 	return new Promise((resolve,reject)=>{
-		let k = Object.keys(a[0].data)
-		resolve(new Array(k, a[1]))
-	})
-}
-
-module.exports.inform = function inform(a){
-	if (typeof(a[0]) == "string") a[0] = JSON.parse(a[0])
-	return new Promise((resolve,reject)=>{
-		a[1].webContents.send("static-inform", a[0])
+		array[1].webContents.send("static-inform", array[0])
 		resolve()
 	})
 }

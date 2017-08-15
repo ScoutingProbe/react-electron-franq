@@ -1,38 +1,48 @@
 const fs = require('fs')
 
-module.exports.confirm = function confirm(l, w){
+module.exports.initial = function initial(location, win){
+	confirm(location, win)
+	.then(store)
+	.then(inform)
+	.catch((error)=>{
+		console.log(error)
+	})
+}
+
+function confirm(location, win){
 	return new Promise((resolve, reject) => {
-		fs.access(l, (err) => {
-			if (err) {
-				resolve(new Array("file not found", l, w))
-				reject(err)
+		fs.access(location, (error) => {
+			if (error) {
+				resolve(new Array("file not found", location, win))
+				reject(error)
 			}
-			else resolve(new Array("file found", l, w))
+			else resolve(new Array("file found", location, win))
 		})
 	})
 }
 
-module.exports.inform = function inform(a){
+function store(array){
 	return new Promise((resolve, reject) => {
-		a[2].webContents.send("location-inform", a[0])
-		resolve(a)
-	})
-}
-
-module.exports.store = function store(a){
-	return new Promise((resolve, reject) => {
-		if (a[0] == "file found") {
-			fs.writeFile("./txt/location.txt", a[1], (error) => {
+		if (array[0] == "file found") {
+			fs.writeFile("./txt/location.txt", array[1], (error) => {
 				if (error) reject(error)
-				else resolve()
+				else resolve(new Array(array[0], array[2]))
 			})	
 		}
-		else if(a[0] = "file not found") {
-			fs.writeFile("./txt/location.txt", a[0], (error) => {
+		else if(array[0] = "file not found") {
+			fs.writeFile("./txt/location.txt", array[0], (error) => {
 				if (error) reject(error)
-				else resolve()
+				else resolve(new Array(array[0], array[2]))
 			})
 		}
 		
 	})
 }
+
+function inform(array){
+	return new Promise((resolve, reject) => {
+		array[1].webContents.send("location-inform", array[0])
+		resolve()
+	})
+}
+
