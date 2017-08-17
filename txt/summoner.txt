@@ -1,2 +1,2 @@
-{"id":24481735,"accountId":38833060,"name":"Duckiee","profileIconId":518,"revisionDate":1502791724000,"summonerLevel":30}
+{"id":24481735,"accountId":38833060,"name":"Duckiee","profileIconId":518,"revisionDate":1502873683000,"summonerLevel":30}
 NA1

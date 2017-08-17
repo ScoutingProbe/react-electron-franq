@@ -50,9 +50,9 @@ app.on('ready', ()=>{
 	createChampion.initial()
 })
 
-// app.on('ready', ()=>{
-// 	op.initial()
-// })
+app.on('ready', ()=>{
+	op.initial()
+})
 
 app.on('window-all-closed', () => {
 	app.quit()

@@ -86,7 +86,7 @@ function request(array){
 		const header = {	
 							"Origin": null,
 							"Accept-Charset": "application/x-www-form-urlencoded; charset=UTF-8",
-							"X-Riot-Token": "RGAPI-148b4411-582c-4e94-b156-a1d6ad218308",
+							"X-Riot-Token": "RGAPI-fdfd17ad-b9f5-4297-b864-b7515a9ac59c",
 							"Accept-Language": "en-US,en;q=0.5",
 						}
 
