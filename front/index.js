@@ -29,7 +29,7 @@ $(document).ready(function(){
 		ipcRenderer.send('champion-input')
 	})
 
-	ipcRenderer.send('champion-ask')
+	//ipcRenderer.send('champion-ask')
 	ipcRenderer.send('summoner-submit', 
 				$("#region").val(), 
 				$("#account").val(), 
@@ -56,7 +56,7 @@ ipcRenderer.on("location-inform", (event, message) => {
 	else if(message == "file not found") $("#feedback-location").html("&#10007;")
 })
 
-ipcRenderer.on("static-inform", (e,j)=>{
+ipcRenderer.on("static-inform", (event,j)=>{
 	let a = $("#lane option:selected").text()
 
 	let c = $("#champion-text").val()
@@ -89,15 +89,29 @@ function sendChampion(l, c){
 	ipcRenderer.send('champion-store', l, c)
 }
 
-ipcRenderer.on("champion-inform", (error, champions)=>{
+
+// http://ddragon.leagueoflegends.com/cdn/img/champion/loading/Aatrox_0.jpg
+// http://ddragon.leagueoflegends.com/cdn/6.24.1/img/champion/Aatrox.png
+ipcRenderer.on("champion-inform", (event, champions)=>{
 	let data = champions.data
 	data = data.map((champ)=>{
-		return `<p>lane: ${champ.lane}, champion: ${champ.champion}</p>
-				<button onClick='deleteChampion("${champ.lane}", "${champ.champion}")'>Delete</button>`
+		return `<div>
+					<img src="http://ddragon.leagueoflegends.com/cdn/6.24.1/img/champion/${champ.champion}.png"/>
+					<p>lane: ${champ.lane}, champion: ${champ.champion}</p>
+					<p>${champ.winRatio}</p>
+					<button onClick='deleteChampion("${champ.lane}", "${champ.champion}")'>Delete</button>
+				</div>`
 	})
+
 	$("#roles").html(data)
 })
 
 function deleteChampion(lane, champion){
 	ipcRenderer.send('champion-delete', lane, champion)
 }
+
+ipcRenderer.on("op-inform", (event, json)=>{
+	console.log(JSON.stringify(json))
+	alert(JSON.stringify(json))
+	alert("op-inform")
+})

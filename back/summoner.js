@@ -1,5 +1,6 @@
 const https = require('https')
 const fs = require('fs')
+const myUtil = require('./util.js')
 
 module.exports.initial = function initial(region, account, summoner, win){
 	query(region, account, summoner, win)
@@ -17,7 +18,7 @@ function query(region, account, summoner, win) {
 		const header = {	
 							"Origin": null,
 							"Accept-Charset": "application/x-www-form-urlencoded; charset=UTF-8",
-							"X-Riot-Token": "RGAPI-fdfd17ad-b9f5-4297-b864-b7515a9ac59c",
+							"X-Riot-Token": myUtil.RIOT_DEVELOPER_KEY,
 							"Accept-Language": "en-US,en;q=0.5",
 						}
 

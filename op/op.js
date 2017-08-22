@@ -1,70 +1,93 @@
 const cheerio = require('cheerio')
 const https = require('https')
 const fs = require('fs')
+const util = require('util')
 
-//get name array
-//request for every name
-//load
-//instantiate
-//write 
+// stat
+// get lanes
+// iterate
+// write
 
 module.exports.initial = function(){
-	getNameArray()
-	.then(request)
-	.then(aggregate)
-	.then(write)
-	.catch((error)=>{
-		console.log(error)
+	return new Promise((resolve,reject)=>{
+		//stat()
+		//.then(getLanes)
+		getLanes()
+		.then(iterate)
+		.then(write)
+		.catch((error)=>{
+			console.log(error)
+		})
+		//.then(resolve)
+	
+
+		// Promise.all(array).then(()=>{
+		// 	func()
+		// })
 	})
 }
 
-function getNameArray(){
+function stat(){
 	return new Promise((resolve,reject)=>{
-		fs.readFile("./txt/static.txt", "utf-8", (error,data)=>{
-			if (error) reject(error)
-			else {
-				data = data.slice(0, data.lastIndexOf("\n"))
-				data = JSON.parse(data)
-				resolve(Object.keys(data.data))
-			}
+		fs.stat("./txt/op.txt", (error, stats)=>{
+			const threeDays = 259200000
+			const now = Date.now()
+			const then = stats.mtime
+
+			if ((now - then) < threeDays) resolve()
+			else reject(new Error(`op.js #stat ${(now-then)/86400000} of 72 hours since last write`)) 
 		})
 	})
 }
 
-function request(champs){
+function getLanes(){
 	return new Promise((resolve,reject)=>{
-		let lanes = ["top", "jungle", "mid", "support", "adc"]
-		let objects = []
-		let errors = 0
-		lanes.forEach((lane,laneIndex,laneArray)=>{
-			champs.forEach((champ, champIndex, champArray)=>{
-				const request = https.request(`https://na.op.gg/champion/${champ}/statistics/${lane}/matchups`, (response)=>{
-					let data = ""
-					response.on('data', (chunk)=>{
-						data += chunk
-					})
-					response.on('end', ()=>{
-						objects.push(load(data.toString(), lane, champ))
-						console.log(`objects:${objects.length+errors} total:${lanes.length*champs.length}`)
-						if ((objects.length+errors) === (lanes.length*champs.length)) resolve(objects)
+		fs.readFile("./txt/lanes.txt", "utf-8", (error,data)=>{
+			if (error) reject(error)
+			else resolve(JSON.parse(data))
+		})
+	})
+}
 
-					})
-				})
-				request.on('error', (error)=>{
-					errors += 1
-					console.log(`op.js #request fail; lane:${lane} champ:${champ}`)
-				})
-				request.end()
+function iterate(object){
+	return new Promise((resolve,reject)=>{
+		Object.entries(object).forEach(([champ, lanes])=>{
+			lanes.forEach((lane)=>{
+				request(champ, lane, object)
 			})
 		})
-		//count = 685 = (lanes.length*champs.length)
-		//last stuck = 630
 	})
 }
 
-function load(string, lane, name){
+function request(champ, lane, object){
+	const r = https.request(`https://na.op.gg/champion/${champ}/statistics/${lane}/matchups`, (response)=>{
+		let data = ""
+		response.on('data', (chunk)=>{
+			data += chunk
+		})
+		response.on('end', ()=>{
+			let i = object[champ].indexOf(lane)
+			object[champ][i] = load(data.toString(), lane)
+			//console.log(object)
+		})
+	})
+	r.on('error', (error)=>{
+		//request(champ, lane, object)
+		console.log(`op.js #request fail; lane:${lane} champ:${champ}`)
+	})
+	r.end()
+}
+
+function load(string, lane){
+	let records = {[lane]: new Array()}
 	$ = cheerio.load(string, {ignoreWhitespace: true})
-		
+
+	let errorMessage = $("div.SectionLayerWrap>div.ContentWrap>p.Content").text()
+	if (errorMessage.includes("There is not enough data available to display statistics for")){
+		records[lane] = "There is not enough data available"
+		return records
+	}
+
 	let winRatio = $(".MatchupChampionListTable>tbody>tr>td.WinRatio").text()	
 	winRatio = winRatio.split("\n")
 	winRatio = winRatio.map((i)=>{
@@ -83,58 +106,19 @@ function load(string, lane, name){
 		if (i.length != 0) return i
 	})
 
-	let binder = {}
-	binder["lane"] = lane
-	binder["champion"] = name
-	binder["winRatio"] = new Array()
-
 	if (champName.length == winRatio.length){
-		champName.forEach((champ, champIndex, champArray)=>{
+		champName.forEach((champ, champIndex)=>{
 			let record = {}
-			record["champion"] = champ
-			record["winRatio"] = winRatio[champIndex]
-			binder.winRatio.push(record)
+			record[champ] = winRatio[champIndex]
+			records[lane].push(record)
 		})
 	}
-	return binder
+	return records
 }
 
-function loadError(lane, champ){
-	let binder = {}
-	binder["lane"] = lane
-	binder["champion"] = champ
-	binder["winRatio"] = new Array()
-	return binder
-}
-
-function aggregate(binder){
-	console.log("aggregate")
-	console.log(binder.length)
+function write(records){
 	return new Promise((resolve,reject)=>{
-		let book = {}
-		book["top"] = {}
-		book["mid"] = {}
-		book["jungle"] = {}
-		book["support"] = {}
-		book["adc"] = {}
-
-		binder.forEach((bound, binderIndex, binderArray)=>{
-			let lane = bound.lane
-			let champion = bound.champion
-			let winRatio = bound.winRatio
-			
-			book[lane][champion] = winRatio
-
-			
-		})
-		resolve(book)
-		console.log(book)
-	})
-}
-
-function write(book){
-	return new Promise((resolve,reject)=>{
-		fs.writeFile("./txt/op.txt", JSON.stringify(book), (error)=>{
+		fs.writeFile("./txt/op.txt", JSON.stringify(records), (error)=>{
 			if (error) reject(error)
 			else resolve()
 		})

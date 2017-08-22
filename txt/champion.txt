@@ -1,1 +1,1 @@
-{"data":[{"lane":"Jungle","champion":"Warwick"},{"lane":"Jungle","champion":"Amumu"},{"lane":"Jungle","champion":"Nunu"},{"lane":"Support","champion":"Soraka"},{"lane":"Support","champion":"Sona"},{"lane":"Support","champion":"Janna"}]}
+{"data":[{"lane":"Support","champion":"TwistedFate"},{"lane":"Support","champion":"Garen"},{"lane":"Support","champion":"Blitzcrank"}]}
