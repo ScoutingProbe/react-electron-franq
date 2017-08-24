@@ -1,1 +1,1 @@
-module.exports.RIOT_DEVELOPER_KEY = "RGAPI-0810e706-67ba-43b7-90db-cca3438d8e95"
+module.exports.RIOT_DEVELOPER_KEY = "RGAPI-5fc4e2f2-a3f2-42d3-9675-0497a6a34e8b"

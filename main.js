@@ -47,7 +47,7 @@ app.on('ready', () => {
 })
 
 app.on('ready', ()=>{
-	static.initial(win)
+	static.initial()
 })
 
 app.on('ready', ()=>{
@@ -56,12 +56,6 @@ app.on('ready', ()=>{
 
 app.on('ready', ()=>{
 	op.initial()
-	.catch((error)=>{
-		console.log(error)
-	})
-	.then(()=>{
-		getOp.initial(win)
-	})
 })
 
 app.on('window-all-closed', () => {

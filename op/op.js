@@ -10,15 +10,13 @@ const util = require('util')
 
 module.exports.initial = function(){
 	return new Promise((resolve,reject)=>{
-		//stat()
-		//.then(getLanes)
-		getLanes()
+		stat()
+		.then(getLanes)
 		.then(iterate)
 		.then(write)
 		.catch((error)=>{
 			console.log(error)
 		})
-		//.then(resolve)
 	})
 }
 
@@ -29,8 +27,8 @@ function stat(){
 			const now = Date.now()
 			const then = stats.mtime
 
-			if ((now - then) < threeDays) resolve()
-			else reject(new Error(`op.js #stat ${(now-then)/86400000} of 72 hours since last write`)) 
+			if ((now - then) > threeDays) resolve()
+			else reject(`op.js #stat ${(now-then)/86400000} of 72 hours since last write`) 
 		})
 	})
 }
