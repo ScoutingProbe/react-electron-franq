@@ -19,11 +19,6 @@ module.exports.initial = function(){
 			console.log(error)
 		})
 		//.then(resolve)
-	
-
-		// Promise.all(array).then(()=>{
-		// 	func()
-		// })
 	})
 }
 
@@ -53,13 +48,15 @@ function iterate(object){
 	return new Promise((resolve,reject)=>{
 		Object.entries(object).forEach(([champ, lanes])=>{
 			lanes.forEach((lane)=>{
-				request(champ, lane, object)
+				request(champ, lane, object, resolve)
 			})
-		})
+		})	
 	})
 }
 
-function request(champ, lane, object){
+//fuckme, i can't get this to work any other way.  
+let count = 0
+function request(champ, lane, object, resolve){
 	const r = https.request(`https://na.op.gg/champion/${champ}/statistics/${lane}/matchups`, (response)=>{
 		let data = ""
 		response.on('data', (chunk)=>{
@@ -68,7 +65,15 @@ function request(champ, lane, object){
 		response.on('end', ()=>{
 			let i = object[champ].indexOf(lane)
 			object[champ][i] = load(data.toString(), lane)
-			//console.log(object)
+			count++
+			let total = Object.entries(object).reduce((count, [champ,lanes])=>{
+				return count + lanes.length
+			}, 0)
+			console.log(`count: ${count} of ${total}`)
+			if (count === total) {
+				resolve(object)
+				console.log("requests done")
+			}
 		})
 	})
 	r.on('error', (error)=>{
