@@ -1,1 +1,1 @@
-{"data":[{"lane":"Support","champion":"TwistedFate"},{"lane":"Support","champion":"Garen"},{"lane":"Support","champion":"Blitzcrank"}]}
+{"data":[{"lane":"Support","champion":"Janna"},{"lane":"Support","champion":"Soraka"},{"lane":"Support","champion":"Sona"}]}

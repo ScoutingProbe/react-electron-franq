@@ -14,7 +14,6 @@ function read(win){
 		fs.readFile("./txt/static.txt", 'utf-8', (error,json)=>{
 			if (error) reject(error)
 			else {
-				json = json.slice(0, json.lastIndexOf("\n"))
 				json = JSON.parse(json)
 				resolve(new Array(Object.keys(json.data), win))
 			}

@@ -29,7 +29,7 @@ $(document).ready(function(){
 		ipcRenderer.send('champion-input')
 	})
 
-	//ipcRenderer.send('champion-ask')
+	ipcRenderer.send('champion-ask')
 	ipcRenderer.send('summoner-submit', 
 				$("#region").val(), 
 				$("#account").val(), 
