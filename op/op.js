@@ -3,15 +3,11 @@ const https = require('https')
 const fs = require('fs')
 const util = require('util')
 
-// stat
-// get lanes
-// iterate
-// write
-
 module.exports.initial = function(){
 	return new Promise((resolve,reject)=>{
 		stat()
 		.then(getLanes)
+		.then(modify)
 		.then(iterate)
 		.then(write)
 		.catch((error)=>{
@@ -42,13 +38,26 @@ function getLanes(){
 	})
 }
 
+function modify(object){
+	return new Promise((resolve,reject)=>{
+		Object.entries(object).forEach(([champ, lanes])=>{
+			let newLanes = {}
+			lanes.forEach((lane=>{
+				newLanes[lane] = []
+			}))
+			object[champ] = newLanes
+		})
+		resolve(object)
+	})
+}
+
 function iterate(object){
 	return new Promise((resolve,reject)=>{
 		Object.entries(object).forEach(([champ, lanes])=>{
-			lanes.forEach((lane)=>{
-				request(champ, lane, object, resolve)
+			Object.entries(lanes).forEach(([lane, winRatios])=>{
+				request(champ,lane,object,resolve)
 			})
-		})	
+		})
 	})
 }
 
@@ -61,33 +70,36 @@ function request(champ, lane, object, resolve){
 			data += chunk
 		})
 		response.on('end', ()=>{
-			let i = object[champ].indexOf(lane)
-			object[champ][i] = load(data.toString(), lane)
+			object[champ][lane] = load(data.toString(), lane)
+
+			let total = 0
+			Object.values(object).forEach(record=>{
+				total += Object.keys(record).length
+			})
+
 			count++
-			let total = Object.entries(object).reduce((count, [champ,lanes])=>{
-				return count + lanes.length
-			}, 0)
-			console.log(`count: ${count} of ${total}`)
 			if (count === total) {
-				resolve(object)
 				console.log("requests done")
+				resolve(object)
 			}
+
+			console.log(`count: ${count} of ${total}`)
 		})
 	})
 	r.on('error', (error)=>{
-		//request(champ, lane, object)
+		request(champ, lane, object, resolve)
 		console.log(`op.js #request fail; lane:${lane} champ:${champ}`)
 	})
 	r.end()
 }
 
 function load(string, lane){
-	let records = {[lane]: new Array()}
+	let records = new Array()
 	$ = cheerio.load(string, {ignoreWhitespace: true})
 
 	let errorMessage = $("div.SectionLayerWrap>div.ContentWrap>p.Content").text()
 	if (errorMessage.includes("There is not enough data available to display statistics for")){
-		records[lane] = "There is not enough data available"
+		records = "There is not enough data available"
 		return records
 	}
 
@@ -113,7 +125,7 @@ function load(string, lane){
 		champName.forEach((champ, champIndex)=>{
 			let record = {}
 			record[champ] = winRatio[champIndex]
-			records[lane].push(record)
+			records.push(record)
 		})
 	}
 	return records

@@ -97,6 +97,7 @@ function fresh(array){
 				if (data.data !== undefined) {
 					data.version === version ? reject("static.js #fresh") : resolve(region)
 				}
+				else resolve(region)
 			}
 		})
 	})
@@ -128,6 +129,7 @@ function request(region){
 			})
 		})
 		.on('error', (error) => {
+			console.log(`static.js #request ${error.message}`)
 			reject(error)
 		})
 		request.end()

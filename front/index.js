@@ -95,23 +95,17 @@ function sendChampion(l, c){
 ipcRenderer.on("champion-inform", (event, champions)=>{
 	let data = champions.data
 	data = data.map((champ)=>{
-		return `<div>
+		return `<div class='card'>
 					<img src="http://ddragon.leagueoflegends.com/cdn/6.24.1/img/champion/${champ.champion}.png"/>
 					<p>lane: ${champ.lane}, champion: ${champ.champion}</p>
-					<p>${champ.winRatio}</p>
+					<p>${JSON.stringify(champ.winRatio)}</p>
 					<button onClick='deleteChampion("${champ.lane}", "${champ.champion}")'>Delete</button>
 				</div>`
 	})
 
-	$("#roles").html(data)
+	$("#pool").html(data)
 })
 
 function deleteChampion(lane, champion){
 	ipcRenderer.send('champion-delete', lane, champion)
 }
-
-ipcRenderer.on("op-inform", (event, json)=>{
-	console.log(JSON.stringify(json))
-	alert(JSON.stringify(json))
-	alert("op-inform")
-})
