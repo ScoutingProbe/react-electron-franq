@@ -5,16 +5,15 @@ const fs = require('fs')
 const {promisify} = require('util')
 const summoner = require('./back/summoner.js')
 const location = require('./back/location.js')
-const getStatic = require('./back/getStatic.js')
-const setChampion = require('./back/setChampion.js')
-const getChampion = require('./back/getChampion.js')
-const createChampion = require('./back/createChampion.js')
-const deleteChampion = require('./back/deleteChampion.js')
-const static = require("./back/static.js")
+const getStatic = require('./static/getStatic.js')
+const setPool = require('./pool/setPool.js')
+const getPool = require('./pool/getPool.js')
+const createPool = require('./pool/createPool.js')
+const deletePool = require('./pool/deletePool.js')
+const static = require("./static/static.js")
 const write = require("./championselect/write.js")
 const op = require("./op/op.js")
 const getOp = require("./op/getOp.js")
-
 
 let win
 
@@ -51,7 +50,7 @@ app.on('ready', ()=>{
 })
 
 app.on('ready', ()=>{
-	createChampion.initial()
+	createPool.initial()
 })
 
 app.on('ready', ()=>{
@@ -70,18 +69,18 @@ ipcMain.on('location-submit', (event, loc) => {
 	location.initial(loc, win)
 })
 
-ipcMain.on('champion-store', (error, lane, championName)=>{
-	setChampion.initial(new Array(lane, championName, win))
+ipcMain.on('pool-store', (error, lane, championName)=>{
+	setPool.initial(new Array(lane, championName, win))
 })
 
 ipcMain.on('champion-input', ()=>{
 	getStatic.initial(win)
 })
 
-ipcMain.on('champion-delete', (error, lane, champion)=>{
-	deleteChampion.initial(new Array(lane, champion, win))
+ipcMain.on('pool-delete', (error, lane, champion)=>{
+	deletePool.initial(new Array(lane, champion, win))
 })
 
-ipcMain.on('champion-ask', (error)=>{
-	getChampion.initial(win)
+ipcMain.on('pool-ask', (error)=>{
+	getPool.initial(win)
 })

@@ -1,4 +1,5 @@
 const fs = require('fs')
+const getPool = require('./getPool')
 
 //array[0] = lane
 //array[1] = champion
@@ -54,8 +55,7 @@ function write(array){
 }
 
 function inform(array){
-	console.log(array)
 	return new Promise((resolve,reject)=>{
-		array[1].webContents.send("champion-inform", array[0])
+		getPool.initial(array[1])
 	})
 }

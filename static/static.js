@@ -1,6 +1,6 @@
 const fs = require('fs')
 const https = require('https')
-const myUtil = require('./util.js')
+const myUtil = require('../back/util.js')
 
 module.exports.initial = function initial(){
 	getRegion()

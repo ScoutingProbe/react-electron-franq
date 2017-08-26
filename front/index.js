@@ -29,7 +29,7 @@ $(document).ready(function(){
 		ipcRenderer.send('champion-input')
 	})
 
-	ipcRenderer.send('champion-ask')
+	ipcRenderer.send('pool-ask')
 	ipcRenderer.send('summoner-submit', 
 				$("#region").val(), 
 				$("#account").val(), 
@@ -86,7 +86,7 @@ ipcRenderer.on("static-inform", (event,j)=>{
 })
 
 function sendChampion(l, c){
-	ipcRenderer.send('champion-store', l, c)
+	ipcRenderer.send('pool-store', l, c)
 }
 
 
@@ -107,5 +107,5 @@ ipcRenderer.on("champion-inform", (event, champions)=>{
 })
 
 function deleteChampion(lane, champion){
-	ipcRenderer.send('champion-delete', lane, champion)
+	ipcRenderer.send('pool-delete', lane, champion)
 }
