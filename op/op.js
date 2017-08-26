@@ -3,14 +3,22 @@ const https = require('https')
 const fs = require('fs')
 const util = require('util')
 
-module.exports.initial = function(){
+module.exports.initial = function(win){
 	return new Promise((resolve,reject)=>{
 		stat()
 		.then(getLanes)
 		.then(modify)
 		.then(iterate)
 		.then(write)
+		.then(()=>{
+			success(win)
+		})
 		.catch((error)=>{
+			if (error.includes("op.js #stat")) {
+				let string = error.slice(12)
+				string = string.concat(" &#10007;")
+				fail(string, win)
+			}
 			console.log(error)
 		})
 	})
@@ -19,12 +27,12 @@ module.exports.initial = function(){
 function stat(){
 	return new Promise((resolve,reject)=>{
 		fs.stat("./txt/op.txt", (error, stats)=>{
-			const threeDays = 259200000
+			const oneDay = 86400000
 			const now = Date.now()
 			const then = stats.mtime
 
-			if ((now - then) > threeDays) resolve()
-			else reject(`op.js #stat ${(now-then)/86400000} of 72 hours since last write`) 
+			if ((now - then) > oneDay) resolve()
+			else reject(`op.js #stat Updated ${((now-then)/86400000).toPrecision(3)} hours ago; Wait for 24 hours`) 
 		})
 	})
 }
@@ -138,4 +146,12 @@ function write(records){
 			else resolve()
 		})
 	})
+}
+
+function success(win){
+	win.webContents.send('op-inform', '&#10003;')
+}
+
+function fail(error, win){
+	win.webContents.send('op-inform', error)
 }

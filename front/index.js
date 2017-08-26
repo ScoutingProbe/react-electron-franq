@@ -20,13 +20,20 @@ $(document).ready(function(){
 
 	$("#champion-text").keypress(function(key){
 		if (key.which === 13) {
-			alert("champ")
 			ipcRender.send('champion-input')
 		}
 	})
 
 	$("#lane").on('input',()=>{
 		ipcRenderer.send('champion-input')
+	})
+
+	$("#op-update").click(()=>{
+		ipcRenderer.send('op-update')
+	})
+
+	$("#static-update").click(()=>{
+		ipcRenderer.send('static-update')
 	})
 
 	ipcRenderer.send('pool-ask')
@@ -73,9 +80,9 @@ ipcRenderer.on("static-inform", (event,j)=>{
 	let b = u.map((w)=>{
 		return `<button onClick='sendChampion("${a}", "${w}")'>${w}</button>`
 	})
-	b.unshift(`<button>${$("#champion-text").val().toString()}</button>`)
+	b.unshift(`<span>${$("#champion-text").val().toString()} </span>`)
 
-	if (b.length > 4) b = b.slice(0, 4)
+	if (b.length > 9) b = b.slice(0, 9)
 
 	if (b[0] === "<button></button>") {
 		$("#champion-complete").html("")
@@ -109,3 +116,13 @@ ipcRenderer.on("champion-inform", (event, champions)=>{
 function deleteChampion(lane, champion){
 	ipcRenderer.send('pool-delete', lane, champion)
 }
+
+ipcRenderer.on("op-inform", (event, message)=>{
+	$("#op-message").html(message)
+})
+
+ipcRenderer.on('static-inform', (event, message)=>{
+	alert("hello")
+	alert(message)
+	$("#static-message").html(message)
+})

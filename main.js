@@ -42,11 +42,10 @@ app.on('ready', () => {
 	globalShortcut.register('F5', () => {
 		console.log('f5 pressed')
 	})
-
 })
 
 app.on('ready', ()=>{
-	static.initial()
+	static.initial(win)
 })
 
 app.on('ready', ()=>{
@@ -54,7 +53,7 @@ app.on('ready', ()=>{
 })
 
 app.on('ready', ()=>{
-	op.initial()
+	op.initial(win)
 })
 
 app.on('window-all-closed', () => {
@@ -83,4 +82,12 @@ ipcMain.on('pool-delete', (error, lane, champion)=>{
 
 ipcMain.on('pool-ask', (error)=>{
 	getPool.initial(win)
+})
+
+ipcMain.on('op-update', (error)=>{
+	op.initial(win)
+})
+
+ipcMain.on('static-update', (error)=>{
+	static.initial(win)
 })

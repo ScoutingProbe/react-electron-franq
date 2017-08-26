@@ -2,13 +2,22 @@ const fs = require('fs')
 const https = require('https')
 const myUtil = require('../back/util.js')
 
-module.exports.initial = function initial(){
+module.exports.initial = function initial(win){
 	getRegion()
 	.then(version)
 	.then(fresh)
 	.then(request)
 	.then(write)
+	.then(()=>{
+		success(win)
+	})
 	.catch((error)=>{
+		if (error === "static.js #fresh"){
+			fail(win, "Static data is up to date; no need.")
+		}
+		else if (error === "static.js #fresh Rate limit exceeded"){
+			fail(win, "10 requests per hour exceeded; try again in an hour.")
+		}
 		console.log(error)
 	})
 }
@@ -97,6 +106,9 @@ function fresh(array){
 				if (data.data !== undefined) {
 					data.version === version ? reject("static.js #fresh") : resolve(region)
 				}
+				else if (data.status.status_code === 429){
+					reject("static.js #fresh Rate limit exceeded")
+				}
 				else resolve(region)
 			}
 		})
@@ -143,4 +155,12 @@ function write(string){
 			else resolve()
 		})
 	})
+}
+
+function success(win){
+	win.webContents.send('static-inform', '&#10003;')
+}
+
+function fail(win, message){
+	win.webContents.send('static-inform', message.concat(' &#10007;'))
 }

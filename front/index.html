@@ -30,16 +30,31 @@
         <option>Summoner id</option>
       </select>
       <input type='text' id='summoner' value='Duckiee'/>
-      <input type='submit' id='summoner-submit'/>
+      <button id='summoner-submit'>Summoner submit</button>
       <span id='feedback'></span>
     </p>
 
     <h1>Confirm league installation</h1>
     <p>
       <input type='text' id='location' style='width:355px' value='C:\Riot Games\League of Legends'/>
-      <input type='submit' id='location-submit'/>
+      <button id='location-submit'>Location submit</button>
       <span id='feedback-location'></span>
     </p>
+
+    <h1>Update data</h1>
+    <p>Warning: clicking buttons will send network requests; may take 30 seconds to 1 minute to complete. Some updates are rate limited; don't spam the buttons!</p>
+    <div>
+      <button id='op-update'>op.gg</button><span id='op-message'></span>
+    </div>
+    <div>
+      <button id='championselect-update'>championselect</button>
+    </div>
+    <div>
+      <button id='games-update'>games played</button>
+    </div>
+    <div>
+      <button id='static-update'>static</button><span id='static-message'></span>
+    </div>
 
     <h1>Pick your champions</h1>
     <p>
