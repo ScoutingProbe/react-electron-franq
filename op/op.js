@@ -5,49 +5,49 @@ const util = require('util')
 
 module.exports.initial = function(win){
 	return new Promise((resolve,reject)=>{
-		stat()
+		stat(win)
 		.then(getLanes)
 		.then(modify)
 		.then(iterate)
 		.then(write)
-		.then(()=>{
-			success(win)
-		})
-		.catch((error)=>{
-			if (error.includes("op.js #stat")) {
-				let string = error.slice(12)
-				string = string.concat(" &#10007;")
-				fail(string, win)
-			}
+		.then(success)
+		.catch(array=>{
+			let win = array[0]
+			let error = array[1]
+			fail(win, error)
 			console.log(error)
 		})
 	})
 }
 
-function stat(){
+function stat(win){
 	return new Promise((resolve,reject)=>{
 		fs.stat("./txt/op.txt", (error, stats)=>{
 			const oneDay = 86400000
 			const now = Date.now()
 			const then = stats.mtime
 
-			if ((now - then) > oneDay) resolve()
-			else reject(`op.js #stat Updated ${((now-then)/86400000).toPrecision(3)} hours ago; Wait for 24 hours`) 
+			if ((now - then) > oneDay) resolve(win)
+			else {
+				let string = `op.js #stat Updated ${((now-then)/86400000).toPrecision(3)} hours ago; Wait for 24 hours`
+				reject(new Array(win, string)) 
+			}
 		})
 	})
 }
 
-function getLanes(){
+function getLanes(win){
 	return new Promise((resolve,reject)=>{
 		fs.readFile("./txt/lanes.txt", "utf-8", (error,data)=>{
-			if (error) reject(error)
-			else resolve(JSON.parse(data))
+			if (error) reject((win, error))
+			else resolve(new Array(win, JSON.parse(data)))
 		})
 	})
 }
 
-function modify(object){
+function modify(array){
 	return new Promise((resolve,reject)=>{
+		let object = array[1]
 		Object.entries(object).forEach(([champ, lanes])=>{
 			let newLanes = {}
 			lanes.forEach((lane=>{
@@ -55,23 +55,24 @@ function modify(object){
 			}))
 			object[champ] = newLanes
 		})
-		resolve(object)
+		resolve(array[1] = object)
 	})
 }
 
-function iterate(object){
+function iterate(array){
+	let object = array[1]
+	let count = 0
 	return new Promise((resolve,reject)=>{
 		Object.entries(object).forEach(([champ, lanes])=>{
 			Object.entries(lanes).forEach(([lane, winRatios])=>{
-				request(champ,lane,object,resolve)
+				request(champ,lane,object,resolve, count, array[0]) //array[0] is win
 			})
 		})
 	})
 }
 
 //fuckme, i can't get this to work any other way.  
-let count = 0
-function request(champ, lane, object, resolve){
+function request(champ, lane, object, resolve, count, win){
 	const r = https.request(`https://na.op.gg/champion/${champ}/statistics/${lane}/matchups`, (response)=>{
 		let data = ""
 		response.on('data', (chunk)=>{
@@ -80,23 +81,27 @@ function request(champ, lane, object, resolve){
 		response.on('end', ()=>{
 			object[champ][lane] = load(data.toString(), lane)
 
-			let total = 0
-			Object.values(object).forEach(record=>{
-				total += Object.keys(record).length
-			})
+			let records = Object.values(object)
+			let total = Object.keys(records).reduce((sum, record)=>{
+				return sum + record.length
+			}, 0)
 
 			count++
 			if (count === total) {
 				console.log("requests done")
-				resolve(object)
+				resolve(new Array(win,object))
 			}
 
-			console.log(`count: ${count} of ${total}`)
+			let message = `count: ${count} of ${total}`
+			win.webContents.send('op-inform', message)
+			console.log(message)
 		})
 	})
 	r.on('error', (error)=>{
-		request(champ, lane, object, resolve)
-		console.log(`op.js #request fail; lane:${lane} champ:${champ}`)
+		request(champ, lane, object, resolve, count, win)
+		let string = `op.js #request fail; lane:${lane} champ:${champ}`
+		win.webContents.send('op-inform', message)
+		console.log(string)
 	})
 	r.end()
 }
@@ -139,11 +144,13 @@ function load(string, lane){
 	return records
 }
 
-function write(records){
+function write(array){
+	let win = array[0]
+	let records = array[1]
 	return new Promise((resolve,reject)=>{
 		fs.writeFile("./txt/op.txt", JSON.stringify(records), (error)=>{
-			if (error) reject(error)
-			else resolve()
+			if (error) reject(new Array(win,error))
+			else resolve(win)
 		})
 	})
 }
@@ -152,6 +159,8 @@ function success(win){
 	win.webContents.send('op-inform', '&#10003;')
 }
 
-function fail(error, win){
+function fail(win, error){
+	error = error.slice(12)
+	error = error.concat(" &#10007;")
 	win.webContents.send('op-inform', error)
 }

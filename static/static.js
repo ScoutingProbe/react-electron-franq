@@ -3,39 +3,36 @@ const https = require('https')
 const myUtil = require('../back/util.js')
 
 module.exports.initial = function initial(win){
-	getRegion()
+	getRegion(win)
 	.then(version)
 	.then(fresh)
 	.then(request)
 	.then(write)
-	.then(()=>{
-		success(win)
-	})
-	.catch((error)=>{
-		if (error === "static.js #fresh"){
-			fail(win, "Static data is up to date; no need.")
-		}
-		else if (error === "static.js #fresh Rate limit exceeded"){
-			fail(win, "10 requests per hour exceeded; try again in an hour.")
-		}
+	.then(success)
+	.catch(array=>{
+		let win = array[0]
+		let error = array[1]
+		fail(win,error)
 		console.log(error)
 	})
 }
 
-function getRegion(){
+function getRegion(win){
 	return new Promise((resolve, reject) => {
 		fs.readFile("./txt/summoner.txt", 'utf-8', (error, data) => {
-			if (error) reject(error)
+			if (error) reject(new Array(win,error))
 			else {
 				data = data.slice(data.indexOf("\n"))
 				data = data.replace("\n", "")
-				resolve(data)
+				resolve(new Array(win,data))
 			}
 		})	
 	})
 }
 
-function version(region){
+function version(array){
+	let win = array[0]
+	let region = array[1]
 	return new Promise((resolve, reject) => {
 		// https://na1.api.riotgames.com/lol/static-data/v3/versions
 		const header = {	
@@ -58,11 +55,11 @@ function version(region){
 			})
 			response.on('end', () => {
 				data = JSON.parse(data)
-				resolve(new Array(region, data[0])) //data[0] is current version
+				resolve(new Array(win, region, data[0])) //data[0] is current version
 			})
 		})
 		.on('error', (error) => {
-			reject(error)
+			reject(new Array(win,error))
 		})
 		request.end()
 	})
@@ -96,26 +93,32 @@ function setRegion(r) {
 }
 
 function fresh(array){
-	let region = array[0]
-	let version = array[1]
+	let win = array[0]
+	let region = array[1]
+	let version = array[2]
 	return new Promise((resolve,reject)=>{
 		fs.readFile("./txt/static.txt", "utf-8", (error,data)=>{
-			if (error) reject(error)
+			if (error) reject(new Array(win, error))
 			else {
 				data = JSON.parse(data)
 				if (data.data !== undefined) {
-					data.version === version ? reject("static.js #fresh") : resolve(region)
+					data.version === version ? 
+					reject(new Array(win, "static.js #fresh")) : resolve(new Array(win,region))
 				}
 				else if (data.status.status_code === 429){
-					reject("static.js #fresh Rate limit exceeded")
+					let time = new Date(Date.now() + 3600000)
+					let message = `static.js #fresh Try again at ${time}`
+					reject(new Array(win, message))
 				}
-				else resolve(region)
+				else resolve(new Array(win, region))
 			}
 		})
 	})
 }
 
-function request(region){
+function request(array){
+	let win = array[0]
+	let region = array[1]
 	return new Promise((resolve, reject) => {
 		//const url = "https://na1.api.riotgames.com/lol/static-data/v3/champions?locale=en_US&tags=image&dataById=false"
 		const header = {	
@@ -137,22 +140,23 @@ function request(region){
 				data += chunk
 			})
 			response.on('end', () => {
-				resolve(data)
+				resolve([win,data])
 			})
 		})
 		.on('error', (error) => {
-			console.log(`static.js #request ${error.message}`)
-			reject(error)
+			reject(new Array(win,error))
 		})
 		request.end()
 	})
 }
 
-function write(string){
+function write(array){
+	let win = array[0]
+	let string = array[1]
 	return new Promise((resolve, reject) => {
 		fs.writeFile("./txt/static.txt", string, (error) => {
-			if (error) reject(error)
-			else resolve()
+			if (error) reject([win,error])
+			else resolve(win)
 		})
 	})
 }
