@@ -22,7 +22,6 @@ function read(win){
 }
 
 function inform(array){
-
 	return new Promise((resolve,reject)=>{
 		array[1].webContents.send('champion-inform', array[0])
 		array[1].webContents.send('op-inform', '&#10003;')

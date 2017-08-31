@@ -5,13 +5,14 @@
   "repository": "https://github.com/andrewSRahn/pickban",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "author": "andrewsrahn@gmail.com",
   "license": "MIT",
   "devDependencies": {
     "cheerio": "^1.0.0-rc.2",
     "electron": "^1.6.11",
-    "jquery": "^3.2.1"
+    "jquery": "^3.2.1",
+    "mocha": "^3.5.0"
   }
 }

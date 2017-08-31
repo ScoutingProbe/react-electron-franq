@@ -1,6 +1,6 @@
 const fs = require('fs')
 
-module.exports.initial = function initial(win){
+module.exports.initial = function(win){
 	read(win)
 	.then(error)
 	.then(inform)
@@ -33,4 +33,12 @@ function inform(array){
 		array[1].webContents.send("static-inform", array[0])
 		resolve()
 	})
+}
+
+function success(win){
+	win.webContents.send('static-inform', '&#10003;')
+}
+
+function fail(win, message){
+	win.webContents.send('static-inform', message.concat(' &#10007;'))
 }

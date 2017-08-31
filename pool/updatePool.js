@@ -1,5 +1,4 @@
 const fs = require('fs')
-const getPool = require('./getPool.js')
 
 // array[0] = lane
 // array[1] = championName

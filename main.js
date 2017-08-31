@@ -2,18 +2,23 @@ const {app, BrowserWindow, globalShortcut, ipcMain} = require('electron')
 const path = require('path')
 const url = require('url')
 const fs = require('fs')
-const {promisify} = require('util')
+
 const summoner = require('./back/summoner.js')
 const location = require('./back/location.js')
-const getStatic = require('./static/getStatic.js')
-const setPool = require('./pool/setPool.js')
-const getPool = require('./pool/getPool.js')
+
+const createStatic = require('./static/createStatic.js')
+const readStatic = require('./static/readStatic.js')
+const updateStatic = require('./static/updateStatic.js')
+
 const createPool = require('./pool/createPool.js')
+const readPool = require('./pool/readPool.js')
+const updatePool = require('./pool/updatePool.js')
 const deletePool = require('./pool/deletePool.js')
-const static = require("./static/static.js")
-const write = require("./championselect/write.js")
-const op = require("./op/op.js")
-const getOp = require("./op/getOp.js")
+
+const createCs = require("./championselect/createChampionSelect.js")
+
+const createOp = require("./op/createOp.js")
+const readOp = require("./op/readOp.js")
 
 let win
 
@@ -36,6 +41,10 @@ app.on('activate', () => {
 	}
 })
 
+app.on('window-all-closed', () => {
+	app.quit()
+})
+
 app.on('ready', createWindow)
 
 app.on('ready', () => {
@@ -45,7 +54,7 @@ app.on('ready', () => {
 })
 
 app.on('ready', ()=>{
-	static.initial(win)
+	//createStatic.initial(win)
 })
 
 app.on('ready', ()=>{
@@ -53,11 +62,7 @@ app.on('ready', ()=>{
 })
 
 app.on('ready', ()=>{
-	op.initial(win)
-})
-
-app.on('window-all-closed', () => {
-	app.quit()
+	createOp.initial(win)
 })
 
 ipcMain.on('summoner-submit', (event, region, account, summ) => {
@@ -69,11 +74,11 @@ ipcMain.on('location-submit', (event, loc) => {
 })
 
 ipcMain.on('pool-store', (error, lane, championName)=>{
-	setPool.initial(new Array(lane, championName, win))
+	updatePool.initial(new Array(lane, championName, win))
 })
 
 ipcMain.on('champion-input', ()=>{
-	getStatic.initial(win)
+	readStatic.initial(win)
 })
 
 ipcMain.on('pool-delete', (error, lane, champion)=>{
@@ -81,13 +86,13 @@ ipcMain.on('pool-delete', (error, lane, champion)=>{
 })
 
 ipcMain.on('pool-ask', (error)=>{
-	getPool.initial(win)
+	readPool.initial(win)
 })
 
 ipcMain.on('op-update', (error)=>{
-	op.initial(win)
+	createOp.initial(win)
 })
 
 ipcMain.on('static-update', (error)=>{
-	static.initial(win)
+	updateStatic.initial(win)
 })

@@ -3,7 +3,9 @@ const https = require('https')
 const fs = require('fs')
 const util = require('util')
 
-module.exports.initial = function(win){
+module.exports = {initial, stat, getLanes, modify, iterate, write, success, fail}
+
+function initial(win){
 	return new Promise((resolve,reject)=>{
 		stat(win)
 		.then(getLanes)
@@ -39,7 +41,7 @@ function stat(win){
 function getLanes(win){
 	return new Promise((resolve,reject)=>{
 		fs.readFile("./txt/lanes.txt", "utf-8", (error,data)=>{
-			if (error) reject((win, error))
+			if (error) reject([win, error])
 			else resolve(new Array(win, JSON.parse(data)))
 		})
 	})
@@ -55,24 +57,24 @@ function modify(array){
 			}))
 			object[champ] = newLanes
 		})
-		resolve(array[1] = object)
+		resolve(array)
 	})
 }
 
 function iterate(array){
 	let object = array[1]
-	let count = 0
 	return new Promise((resolve,reject)=>{
 		Object.entries(object).forEach(([champ, lanes])=>{
 			Object.entries(lanes).forEach(([lane, winRatios])=>{
-				request(champ,lane,object,resolve, count, array[0]) //array[0] is win
+				request(champ,lane,object,resolve, array[0]) //array[0] is win
 			})
 		})
 	})
 }
 
 //fuckme, i can't get this to work any other way.  
-function request(champ, lane, object, resolve, count, win){
+let count = 0
+function request(champ, lane, object, resolve, win){
 	const r = https.request(`https://na.op.gg/champion/${champ}/statistics/${lane}/matchups`, (response)=>{
 		let data = ""
 		response.on('data', (chunk)=>{
@@ -81,15 +83,15 @@ function request(champ, lane, object, resolve, count, win){
 		response.on('end', ()=>{
 			object[champ][lane] = load(data.toString(), lane)
 
-			let records = Object.values(object)
-			let total = Object.keys(records).reduce((sum, record)=>{
-				return sum + record.length
+			let values = Object.values(object)
+			let total = values.reduce((sum, v)=>{
+				return sum + Object.keys(v).length
 			}, 0)
 
 			count++
 			if (count === total) {
-				console.log("requests done")
 				resolve(new Array(win,object))
+				console.log("requests done")
 			}
 
 			let message = `count: ${count} of ${total}`
