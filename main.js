@@ -54,7 +54,7 @@ app.on('ready', () => {
 })
 
 app.on('ready', ()=>{
-	//createStatic.initial(win)
+	createStatic.initial(win)
 })
 
 app.on('ready', ()=>{
@@ -63,6 +63,10 @@ app.on('ready', ()=>{
 
 app.on('ready', ()=>{
 	createOp.initial(win)
+})
+
+app.on('ready', ()=>{
+	createCs.initial(win)
 })
 
 ipcMain.on('summoner-submit', (event, region, account, summ) => {

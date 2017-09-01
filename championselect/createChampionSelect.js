@@ -2,7 +2,7 @@ const fs = require('fs')
 const http = require('http')
 const cheerio = require('cheerio')
 
-module.exports.initial = function initial(){
+module.exports.initial = function initial(win){
 	let base = "http://championselect.net/champions/"
 	getChamps()
 	.then(mutate)

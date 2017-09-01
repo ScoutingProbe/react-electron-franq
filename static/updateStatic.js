@@ -101,7 +101,8 @@ function fresh(array){
 			else {
 				data = JSON.parse(data)
 				if (data.data !== undefined) {
-					let message = "static.js #fresh no update required"
+					let message = "updateStatic.js #fresh no update required"
+					win.webContents.send('static-message', message)
 					data.version === version ? 
 					reject(new Array(win, message)) : resolve(new Array(win,region))
 				}

@@ -1,4 +1,5 @@
 const fs = require('fs')
+const readPool = require('./readPool')
 
 // array[0] = lane
 // array[1] = championName
@@ -58,6 +59,6 @@ function write(array){
 
 function inform(array){
 	return new Promise((resolve,reject)=>{
-		getPool.initial(array[1])
+		readPool.initial(array[1])
 	})
 }

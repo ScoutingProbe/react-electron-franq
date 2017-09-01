@@ -121,8 +121,6 @@ ipcRenderer.on("op-inform", (event, message)=>{
 	$("#op-message").html(message)
 })
 
-ipcRenderer.on('static-inform', (event, message)=>{
-	alert("hello")
-	alert(message)
+ipcRenderer.on('static-message', (event, message)=>{
 	$("#static-message").html(message)
 })
