@@ -2,73 +2,91 @@
 <html>
   <head>
     <meta charset='utf-8'/>
-    <title>Hello electron!</title>
+    <title>Pickban configuration</title>
     <script type='text/javascript' src="./index.js"></script>
     <link rel='stylesheet' type='text/css' href='./index.css'/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   </head>
   <body>
-    <a href='./match.html'>Match</a>
-    <h1>Enter your Riot summoner</h1>
-    <p>
-      <select id='region'>
-        <option>RU</option>
-        <option>KR</option>
-        <option>BR1</option>
-        <option>OC1</option>
-        <option>JP1</option>
-        <option selected='selected'>NA1</option>
-        <option>EUN1</option>
-        <option>EUW1</option>
-        <option>TR1</option>
-        <option>LA1</option>
-        <option>LA2</option>
-      </select>
-      <select id='account'>
-        <option>Account id</option>
-        <option selected='selected'>Summoner name</option>
-        <option>Summoner id</option>
-      </select>
-      <input type='text' id='summoner' value='Duckiee'/>
-      <button id='summoner-submit'>Summoner submit</button>
-      <span id='feedback'></span>
-    </p>
+    <div>
+      <a href='./match.html'>Match</a>
+    </div>
+    <div class='form'>
+      <div>
+        <select>
+          <option>English</option>
+          <option>Korean</option>
+          <option>Chinese</option>
+        </select>
+      </div>
 
-    <h1>Confirm league installation</h1>
-    <p>
-      <input type='text' id='location' style='width:355px' value='C:\Riot Games\League of Legends'/>
-      <button id='location-submit'>Location submit</button>
-      <span id='feedback-location'></span>
-    </p>
-
-    <h1>Update data</h1>
-    <div>
-      <button id='op-update'>op.gg</button><span id='op-message'></span>
-    </div>
-    <div>
-      <button id='championselect-update'>championselect</button>
-    </div>
-    <div>
-      <button id='games-update'>games played</button>
-    </div>
-    <div>
-      <button id='static-update'>static</button><span id='static-message'></span>
+      <div>
+        <input type='text' id='location' style='width:355px' value='C:\Riot Games\League of Legends'/>
+        <button id='location-submit'>Location</button>
+        <span id='feedback-location'></span>
+      </div>
     </div>
 
-    <h1>Pick your champions</h1>
-    <p>
-      <select id='lane'>
-        <option>Top</option>
-        <option>Middle</option>
-        <option>Jungle</option>
-        <option>Support</option>
-        <option>Bottom</option>
-      </select>
-      <input type='text' id='champion-text'/>
-      <p id='champion-complete'></p>
-    </p>
+    <div id='scrape' class='form'>
+      <div> 
+        <button id='op-update'>op.gg</button>
+        <span id='op-message'>op.gg loading...</span>
+      </div>
+      <div> 
+        <button id='championselect-update'>championselect</button>
+        <span id='championselect-message'>championselect.net loading...</span> 
+      </div>
+    </div>
+
+    <div id='riotgames' class='form'>
+      <div>
+        <select id='region'>
+          <option>RU</option>
+          <option>KR</option>
+          <option>BR1</option>
+          <option>OC1</option>
+          <option>JP1</option>
+          <option selected='selected'>NA1</option>
+          <option>EUN1</option>
+          <option>EUW1</option>
+          <option>TR1</option>
+          <option>LA1</option>
+          <option>LA2</option>
+        </select>
+        <input type='text' id='summoner' value='Duckiee'/>
+      </div>
+
+      <div>
+        <span>summoner</span>
+        <span id='summoner-message'></span>
+      </div>
+      
+      <div>
+        <span>champions</span>
+        <span id='champions-message'>champions loading...</span> 
+      </div>
+      
+      <div>
+        <span>champion masteries</span>
+        <span id='championMastery-message'>champion masteries loading...</span>
+      </div>
+
+      <div>
+        <button id='riotgames'>Request Riot Games</button>
+      </div>
+
+    </div>
+
     
-    <div id='pool'></div>
+
+    <div>
+      <h1>Your champion masteries</h1>
+      <span id='championMastery-success'>champion masteries loading...</span>
+    </div>
+
+    <div id='links'>links
+    </div>
+
 
   </body>
 </html>

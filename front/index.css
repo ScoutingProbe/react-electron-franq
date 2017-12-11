@@ -1,4 +1,22 @@
-#pool div:nth-child(odd){
+/*#pool div:nth-child(odd){
 	background: grey;
 }
+/*
+COLORS
+navy,blue,aqua,teal,olive,green,lime,yellow,orange,red,maroon,fuchsia,purple,black,gray,silver
+*/
+h1 {
+	background: white;
+	color: black;
+	font-family: "Times New Roman", Times, serif;
+}
 
+
+
+a {
+	color: blue;
+}
+
+.form{
+	padding: 10px;
+}

@@ -3,27 +3,32 @@ const path = require('path')
 const url = require('url')
 const fs = require('fs')
 
-const summoner = require('./back/summoner.js')
+
 const location = require('./back/location.js')
 
-const createStatic = require('./static/createStatic.js')
-const readStatic = require('./static/readStatic.js')
-const updateStatic = require('./static/updateStatic.js')
+const createChampionSelect = require('./championselect/createChampionSelect.js')
 
-const createPool = require('./pool/createPool.js')
-const readPool = require('./pool/readPool.js')
-const updatePool = require('./pool/updatePool.js')
-const deletePool = require('./pool/deletePool.js')
+const league = require('./league/league.js')
 
-const createCs = require("./championselect/createChampionSelect.js")
+const createOp = require('./op/createOp.js')
+const readOp = require('./op/readOp.js')
 
-const createOp = require("./op/createOp.js")
-const readOp = require("./op/readOp.js")
+const championMastery = require('./riotgames/championMastery.js')
+const champions = require('./riotgames/champions.js')
+// const league
+// const lolStaticData
+// const lolStatus
+// const match
+// const spectator
+const summoner = require('./riotgames/summoner.js')
+// const thirdPartyCode
+// const tournamentStub
+// const tournament
 
 let win
 
 function createWindow() {
-	win = new BrowserWindow({width: 800, height: 850})
+	win = new BrowserWindow({width: 1000, height: 850})
 	win.loadURL(url.format({
 		pathname: path.join(__dirname, '/front/index.html'),
 		protocol: 'file:',
@@ -53,50 +58,54 @@ app.on('ready', () => {
 	})
 })
 
-app.on('ready', ()=>{
-	createStatic.initial(win)
-})
 
-app.on('ready', ()=>{
-	createPool.initial()
-})
 
-app.on('ready', ()=>{
-	createOp.initial(win)
-})
-
-app.on('ready', ()=>{
-	createCs.initial(win)
-})
-
-ipcMain.on('summoner-submit', (event, region, account, summ) => {
+//////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+// summoner and location buttons
+//////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+ipcMain.on('summoner', (event, region, account, summ) => {
 	summoner.initial(region, account, summ, win)
 })
 
-ipcMain.on('location-submit', (event, loc) => {
+ipcMain.on('location', (event, loc) => {
 	location.initial(loc, win)
 })
 
-ipcMain.on('pool-store', (error, lane, championName)=>{
-	updatePool.initial(new Array(lane, championName, win))
+//////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+// op, championselect, champions, championMastery refresh buttons
+//////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+
+ipcMain.on('op', (error)=>{
+	console.log('op under construction')
+	win.webContents.send('op-inform', '<span>op under construction</span>')
+	//createOp.initial(win)
 })
 
-ipcMain.on('champion-input', ()=>{
-	readStatic.initial(win)
+ipcMain.on('championselect', error=>{
+	console.log('championselect under construction')
+	win.webContents.send('championselect', 'championselect under construction')
+	//createChampionSelect.initial(win)
 })
 
-ipcMain.on('pool-delete', (error, lane, champion)=>{
-	deletePool.initial(new Array(lane, champion, win))
+ipcMain.on('champions', ()=>{
+	champions.initial(win)
 })
 
-ipcMain.on('pool-ask', (error)=>{
-	readPool.initial(win)
+ipcMain.on('championMastery', ()=>{
+	championMastery.initial(win)
 })
 
-ipcMain.on('op-update', (error)=>{
-	createOp.initial(win)
-})
 
-ipcMain.on('static-update', (error)=>{
-	updateStatic.initial(win)
+//////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+// detect league of legends client
+//////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+
+ipcMain.on('detect', ()=>{
+	league.initial(win)
 })

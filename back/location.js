@@ -41,7 +41,7 @@ function store(array){
 
 function inform(array){
 	return new Promise((resolve, reject) => {
-		array[1].webContents.send("location-inform", array[0])
+		array[1].webContents.send("location", array[0])
 		resolve()
 	})
 }

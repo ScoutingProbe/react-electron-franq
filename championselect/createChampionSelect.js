@@ -2,42 +2,36 @@ const fs = require('fs')
 const http = require('http')
 const cheerio = require('cheerio')
 
+//http://championselect.net/champions/leesin/matchups/all/strongpick
+//http://championselect.net/champions/leesin/matchups/all/counter
+//http://championselect.net/champions/leesin/matchups/all/tie
+//http://championselect.net/champions/leesin/matchups/all/synergy
+
 module.exports.initial = function initial(win){
-	let base = "http://championselect.net/champions/"
-	getChamps()
-	.then(mutate)
-	.then(request)
-	.catch((error)=>{
+	readPool()
+	.then(scrapeStrongPick)
+	// .then(scrapeCounter)
+	// .then(scrapeTie)
+	// .then(scrapeSynergy)
+	// .then(inform)
+	.catch(error=>{
 		console.log(error)
 	})
 }
 
-function getChamps(){
+function readPool(){
 	return new Promise((resolve,reject)=>{
-		fs.readFile("./txt/static_cache.txt", (error,data)=>{
+		fs.readFile("./txt/pool.txt",(error,data)=>{
 			if (error) reject(error)
-			else {
-				let a = data.toString()
-				a = a.slice(0, a.lastIndexOf("\n"))
-				a = JSON.parse(a)
-				a = Object.keys(a.data)
-				resolve(a)
-			}
+			else resolve(data)
 		})
 	})
 }
 
-function mutate(array){
+function scrapeStrongPick(){
 	return new Promise((resolve,reject)=>{
-		let obj = new Object()
-		for (let i = 0; i < array.length; i++){
-			let name = array[i]
-			obj[name] = new Array()
-		}
-		resolve(obj)
 	})
 }
-
 
 function request(c){
 	return new Promise((resolve,reject)=>{

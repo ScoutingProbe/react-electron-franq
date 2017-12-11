@@ -3,36 +3,33 @@ const https = require('https')
 const fs = require('fs')
 const util = require('util')
 
-module.exports = {initial, stat, getLanes, modify, iterate, write, success, fail}
+module.exports = {initial}
 
 function initial(win){
-	return new Promise((resolve,reject)=>{
-		stat(win)
-		.then(getLanes)
-		.then(modify)
-		.then(iterate)
-		.then(write)
-		.then(success)
-		.catch(array=>{
-			let win = array[0]
-			let error = array[1]
-			fail(win, error)
-			console.log(error)
-		})
+	stat(win)
+	.then(getLanes)
+	.then(iterate)
+	// .then(write)
+	// .then(inform)
+	.catch(error=>{
+		console.log(error)
 	})
 }
 
 function stat(win){
 	return new Promise((resolve,reject)=>{
-		fs.stat("./txt/op.txt", (error, stats)=>{
-			const oneDay = 86400000
-			const now = Date.now()
-			const then = stats.mtime
+		fs.stat('./txt/op.txt', (error, stats)=>{
+			if (error) reject(error)
 
-			if ((now - then) > oneDay) resolve(win)
+			let yesterday = Date.now() - 86400000
+			if (stats.mtime > yesterday){
+				let hoursSince = stats.mtime - Date.now()
+				let string = `Op.gg updated ${hoursSince/86400000} hr ago; wait 24 hours`
+				win.webContents.send('op-inform', string)
+				reject(new Error(string))
+			}
 			else {
-				let string = `op.js #stat Updated ${((now-then)/86400000).toPrecision(3)} hours ago; Wait for 24 hours`
-				reject(new Array(win, string)) 
+				resolve(win)
 			}
 		})
 	})
@@ -40,129 +37,36 @@ function stat(win){
 
 function getLanes(win){
 	return new Promise((resolve,reject)=>{
-		fs.readFile("./txt/lanes.txt", "utf-8", (error,data)=>{
-			if (error) reject([win, error])
-			else resolve(new Array(win, JSON.parse(data)))
+		fs.readFile('./txt/lanes.txt', 'utf-8', (error,data)=>{
+			if (error) reject(error)
+
+			let lanes = JSON.parse(data)
+			let keys = Object.keys(lanes)
+
+			Object.keys(lanes).forEach((item, index, array)=>{
+				let object = {}
+				lanes[item].forEach((ite, ind, arr)=>{
+					object[ite] = new Array()
+				})
+				lanes[item] = object
+			})
+
+			resolve(new Array(win, lanes))
 		})
 	})
 }
 
-function modify(array){
-	return new Promise((resolve,reject)=>{
-		let object = array[1]
-		Object.entries(object).forEach(([champ, lanes])=>{
-			let newLanes = {}
-			lanes.forEach((lane=>{
-				newLanes[lane] = []
-			}))
-			object[champ] = newLanes
-		})
-		resolve(array)
-	})
-}
+function iterate(winAndLanes){
+	let win = winAndLanes[0]
+	let lanes = winAndLanes[1]
 
-function iterate(array){
-	let object = array[1]
+	let urls = []
+	// http://na.op.gg/champion/nidalee/statistics/jungle/matchups
 	return new Promise((resolve,reject)=>{
-		Object.entries(object).forEach(([champ, lanes])=>{
-			Object.entries(lanes).forEach(([lane, winRatios])=>{
-				request(champ,lane,object,resolve, array[0]) //array[0] is win
+		Object.keys(lanes).forEach((item, index, array)=>{
+			Object.keys(lanes[item]).forEach((ite, ind, arr)=>{
+				urls.push(`http://na.op.gg/champion/${item}/statistics/${ite}/matchups`)
 			})
 		})
 	})
-}
-
-//fuckme, i can't get this to work any other way.  
-let count = 0
-function request(champ, lane, object, resolve, win){
-	const r = https.request(`https://na.op.gg/champion/${champ}/statistics/${lane}/matchups`, (response)=>{
-		let data = ""
-		response.on('data', (chunk)=>{
-			data += chunk
-		})
-		response.on('end', ()=>{
-			object[champ][lane] = load(data.toString(), lane)
-
-			let values = Object.values(object)
-			let total = values.reduce((sum, v)=>{
-				return sum + Object.keys(v).length
-			}, 0)
-
-			count++
-			if (count === total) {
-				resolve(new Array(win,object))
-				console.log("requests done")
-			}
-
-			let message = `count: ${count} of ${total}`
-			win.webContents.send('op-inform', message)
-			console.log(message)
-		})
-	})
-	r.on('error', (error)=>{
-		request(champ, lane, object, resolve, count, win)
-		let string = `op.js #request fail; lane:${lane} champ:${champ}`
-		win.webContents.send('op-inform', message)
-		console.log(string)
-	})
-	r.end()
-}
-
-function load(string, lane){
-	let records = new Array()
-	$ = cheerio.load(string, {ignoreWhitespace: true})
-
-	let errorMessage = $("div.SectionLayerWrap>div.ContentWrap>p.Content").text()
-	if (errorMessage.includes("There is not enough data available to display statistics for")){
-		records = "There is not enough data available"
-		return records
-	}
-
-	let winRatio = $(".MatchupChampionListTable>tbody>tr>td.WinRatio").text()	
-	winRatio = winRatio.split("\n")
-	winRatio = winRatio.map((i)=>{
-		return i.replace(new RegExp(/\t*/), "")
-	})
-	winRatio = winRatio.filter((i)=>{
-		if (i.length != 0) return i
-	})
-	
-	let champName = $(".MatchupChampionListTable>tbody>tr>td.Champion").text()
-	champName = champName.split("\n")
-	champName = champName.map((i)=>{
-		return i.replace(new RegExp(/\t*/), "")
-	})
-	champName = champName.filter((i)=>{
-		if (i.length != 0) return i
-	})
-
-	if (champName.length == winRatio.length){
-		champName.forEach((champ, champIndex)=>{
-			let record = {}
-			record[champ] = winRatio[champIndex]
-			records.push(record)
-		})
-	}
-	return records
-}
-
-function write(array){
-	let win = array[0]
-	let records = array[1]
-	return new Promise((resolve,reject)=>{
-		fs.writeFile("./txt/op.txt", JSON.stringify(records), (error)=>{
-			if (error) reject(new Array(win,error))
-			else resolve(win)
-		})
-	})
-}
-
-function success(win){
-	win.webContents.send('op-inform', '&#10003;')
-}
-
-function fail(win, error){
-	error = error.slice(12)
-	error = error.concat(" &#10007;")
-	win.webContents.send('op-inform', error)
 }

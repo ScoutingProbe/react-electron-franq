@@ -1,1 +1,0 @@
-{"data":[{"lane":"Support","champion":"Janna"},{"lane":"Support","champion":"Soraka"},{"lane":"Support","champion":"Sona"},{"lane":"Jungle","champion":"LeeSin"},{"lane":"Jungle","champion":"Amumu"},{"lane":"Jungle","champion":"Warwick"}]}
