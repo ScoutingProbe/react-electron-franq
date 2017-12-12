@@ -2,26 +2,6 @@ const {ipcRenderer} = require('electron')
 let $ = require('jquery')
 
 $(document).ready(function(){
-	//https://vignette.wikia.nocookie.net/leagueoflegends/images/2/2f/Profile_Icon_Tencent_00.jpg/revision/latest
-	$('#links').click(function(){
-		let count = 29
-		let html = '<div id=\'links\'>'
-		for(let i=0;i<count;i++){
-			html += `<a href=
-			'https://vignette.wikia.nocookie.net/leagueoflegends/images/2/2f/Profile_Icon_Tencent_${i}.jpg
-			/revision/latest'>download icon ${i}</a>`
-		}
-		html += '</div>'
-
-		$('#links').html(html)
-	})
-	$('#summoner-submit').click(function(){
-		ipcRenderer.send('summoner', 
-						$('#region').val(), 
-						'Summoner name', 
-						$('#summoner').val())
-	})
-
 	$('#location-submit').click(() => {
 		ipcRenderer.send('location',
 						$('#location').val())
@@ -35,52 +15,17 @@ $(document).ready(function(){
 		ipcRenderer.send('championselect')
 	})
 
-	$('#champions-update').click(()=>{
-		let message = $('#champions-message').text()
-		if(message === 'champions loading...') ipcRenderer.send('champions')
-		if(message.includes('champions updated at ') ||
-			message.includes(' was thrown. ') ||
-			message.includes('Something went wrong')){
-			$('#champions-update').prop('disabled', true)
-			let timer = 10
-			let interval = window.setInterval(()=>{
-				timer--
-				$('#champions-update').text(`champions ${timer}`)
-				if (timer === 0) {
-					clearInterval(interval)
-					$('#champions-update').text(`champions`)
-				}
-			}, 1000)
-			window.setTimeout(()=>{
-				$('#champions-update').prop('disabled', false)
-			}, 10000)
-		}
+	$('#riotgames').click(()=>{
+		ipcRenderer.send('riotgames',
+							$('#region').val(),
+							$('#summoner').val())
 	})
 
-	$('#championMastery-update').click(()=>{
-		ipcRenderer.send('championMastery')
-	})
-
-	ipcRenderer.send('summoner', 
-				$('#region').val(), 
-				'Summoner name', 
-				$('#summoner').val())
 	ipcRenderer.send('location',
 				$('#location').val())
 	ipcRenderer.send('op')
 	ipcRenderer.send('championselect')
-	ipcRenderer.send('champions')
 	//ipcRenderer.send('championMastery')
-})
-
-ipcRenderer.on('summoner', (event, message) => {
-	if (message === 'summoner not found') {
-		$('#feedback').html('&#10007;')
-	}
-	else if (message === 'riot developer key expired'){
-		$('#feedback').html(message)
-	}
-	else if (message.name == $('#summoner').val()) $('#feedback').html('&#10003;')
 })
 
 ipcRenderer.on('location', (event, message) => {
@@ -88,34 +33,21 @@ ipcRenderer.on('location', (event, message) => {
 	if (message == 'file found') $('#feedback-location').html('&#10003;')
 	else if(message == 'file not found') $('#feedback-location').html('&#10007;')
 })
-
-// http://ddragon.leagueoflegends.com/cdn/img/champion/loading/Aatrox_0.jpg
-// http://ddragon.leagueoflegends.com/cdn/6.24.1/img/champion/Aatrox.png
-ipcRenderer.on('champion-inform', (event, champions)=>{
-	let data = champions.data
-	data = data.map((champ)=>{
-		return `<div class='card'>
-					<img src='http://ddragon.leagueoflegends.com/cdn/6.24.1/img/champion/${champ.champion}.png'/>
-					<p>lane: ${champ.lane}, champion: ${champ.champion}</p>
-					<p>${JSON.stringify(champ.winRatio)}</p>
-					<p>items</p>
-					<p>throws</p>
-					<p>surrenders</p>
-					<p>lane phase</p>
-					<p>kill difference</p>
-					<p>death difference</p>
-					<p>damage difference</p>
-					<p>recall timings</p>
-					<p>objectives</p>
-					<p>pings</p>
-					<p>honor</p>
-					<button onClick='deleteChampion('${champ.lane}', '${champ.champion}')'>Delete</button>
-				</div>`
-	})
-
-	$('#pool').html(data)
-})
-
+/*
+http://ddragon.leagueoflegends.com/cdn/img/champion/loading/Aatrox_0.jpg
+http://ddragon.leagueoflegends.com/cdn/6.24.1/img/champion/Aatrox.png
+<p>items</p>
+<p>throws</p>
+<p>surrenders</p>
+<p>lane phase</p>
+<p>kill difference</p>
+<p>death difference</p>
+<p>damage difference</p>
+<p>recall timings</p>
+<p>objectives</p>
+<p>pings</p>
+<p>honor</p>
+*/
 
 ipcRenderer.on('op-inform', (event, message)=>{
 	$('#op-message').html(message)
@@ -126,7 +58,11 @@ ipcRenderer.on('championselect', (event, message)=>{
 	$('#championselect-message').html(html)
 })
 
-//http://ddragon.leagueoflegends.com/cdn/6.24.1/img/champion/Warwick.png
+ipcRenderer.on('champions', (event, message)=>{
+	let html = `<span>${message}</span>`
+	$('#champions-message').html(html)
+})
+
 ipcRenderer.on('championMastery-success', (event, champions)=>{
 	let html = ''
 	for (let i = 0; i < champions.length;i++){
@@ -168,9 +104,4 @@ ipcRenderer.on('championMastery-error', (event, error, stringErrorMessage)=>{
 	html += `${stringErrorMessage}</p>`
 
 	$('championMastery-message').html(html)
-})
-
-ipcRenderer.on('champions', (event, message)=>{
-	let html = `<span>${message}</span>`
-	$('#champions-message').html(html)
 })
