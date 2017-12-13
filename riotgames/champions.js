@@ -2,25 +2,15 @@ const fs = require('fs')
 const https = require ('https')
 const dry = require('../back/dry.js')
 
-module.exports.initial = function(win){
-	getRegion(win)
-	.then(requestChampions)
-	.then(receiveChampions)
-	.then(store)
-	.then(inform)
-	.catch(error=>{
-		console.log(error)
-	})
-}
-
-function getRegion(win){
+module.exports.initial = function(a){
 	return new Promise((resolve,reject)=>{
-		fs.readFile('./txt/summoner.txt', 'utf-8', (error,data)=>{
-			if (error) reject(error)
-			else {
-				let region = data.substring(data.length - 3, data.length)
-				resolve(new Array(win, region))
-			}
+		requestChampions(a)
+		.then(produceMessage)
+		.then(write)
+		.then(inform)
+		.then(resolve)
+		.catch(error=>{
+			console.log(error)
 		})
 	})
 }
@@ -29,6 +19,7 @@ function requestChampions(a){
 	return new Promise((resolve,reject)=>{
 		let win = a[0]
 		let region = a[1]
+		let summoner = a[2]
 //https://na1.api.riotgames.com/lol/static-data/v3/champions?locale=en_US&tags=allytips&tags=blurb&tags=enemytips&tags=format&tags=image&tags=keys&tags=lore&dataById=false
 		const header = {	
 							"Origin": null,
@@ -50,7 +41,7 @@ function requestChampions(a){
 				buffer += chunk
 			})
 			response.on('end', ()=>{
-				resolve(new Array(win, JSON.parse(buffer)))
+				resolve(new Array(win, region, summoner, JSON.parse(buffer)))
 			})
 
 		})
@@ -61,51 +52,48 @@ function requestChampions(a){
 	})
 }
 
-function receiveChampions(a){
+function produceMessage(a){
 	return new Promise((resolve,reject)=>{
 		let win = a[0]
-		let response = a[1]
+		let region = a[1]
+		let summoner = a[2]
+		let response = a[3]
 
-		try {
-			let jax = response['data']['Jax']['id']
-			if (jax === 24) resolve(a)
-		}
-		catch(e){
+		if(typeof(response['type']) === 'string') resolve(new Array(win, region, summoner, response, 'ok'))
+		else {
 			let statusCode = response['status']['status_code']
 			switch(statusCode) {
 				case 400:
-					resolve(new Array(win, '400 was thrown. Bad Request'))
+					resolve(new Array(win, region, summoner, response, '400 was thrown. Bad Request'))
 				case 403:
-					resolve(new Array(win, '403 was thrown. Forbidden. old riotgames api key'))
+					resolve(new Array(win, region, summoner, response, '403 was thrown. Forbidden. old riotgames api key'))
 				case 404:
-					resolve(new Array(win, '404 was thrown. Not found'))
+					resolve(new Array(win, region, summoner, response, '404 was thrown. Not found'))
 				case 415:
-					resolve(new Array(win, '415 was thrown. Unsupported Media Type'))
+					resolve(new Array(win, region, summoner, response, '415 was thrown. Unsupported Media Type'))
 				case 429:
-					resolve(new Array(win, '429 was thrown. Rate Limit Exceeded'))
+					resolve(new Array(win, region, summoner, response, '429 was thrown. Rate Limit Exceeded'))
 				case 500:
-					resolve(new Array(win, '500 was thrown. Internal Server Error'))
+					resolve(new Array(win, region, summoner, response, '500 was thrown. Internal Server Error'))
 				default:
-					resolve(new Array(win, 'Something went wrong'))
-			}
+					resolve(new Array(win, region, summoner, response, 'Something went wrong'))
+			}	
 		}
 	})
 }
 
-function store(a){
+function write(a){
 	return new Promise((resolve,reject)=>{
 		let win = a[0]
-		let unsure = a[1]
+		let region = a[1]
+		let summoner = a[2]
+		let response = a[3]
+		let message = a[4]
 
-		if (typeof(unsure) === 'string') resolve(a)
-
-		fs.writeFile('./txt/champions.txt', JSON.stringify(a[1]), error=>{
+		fs.writeFile('./txt/champions.txt', JSON.stringify(response), error=>{
 			if (error) reject(error)
-			
-			let date = new Date()
-			currentTime = date.toUTCString()
-			console.log(`champions updated at ${currentTime}`)
-			resolve(new Array(win, `champions updated at ${currentTime}`))
+
+			resolve(new Array(win, region, summoner, message))
 		})
 	})
 }
@@ -113,9 +101,11 @@ function store(a){
 function inform(a){
 	return new Promise((resolve,reject)=>{
 		let win = a[0]
-		let message = a[1]
+		let region = a[1]
+		let summoner = a[2]
+		let message = a[3]
 		win.webContents.send('champions', message)
-		resolve()
+		if(message === 'ok') resolve(new Array(win, region, summoner))
+		else console.log('cannot proceed champions#inform')
 	})
-
 }

@@ -1,1 +1,1 @@
-"403 was thrown. Forbidden. old riotgames api key"
+{"status":{"message":"Rate limit exceeded","status_code":429}}

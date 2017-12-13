@@ -5,18 +5,24 @@ const https = require('https')
 const fs = require('fs')
 const dry = require('../back/dry.js')
 
-module.exports.initial = function initial(region, account, summoner, win){
-	query(region, account, summoner, win)
-	.then(write)
-	.then(inform)
-	.catch((error) => {
-		console.log(error)
+module.exports.initial = function initial(win, region, summoner){
+	return new Promise((resolve,reject)=>{
+		query(win, region, summoner)
+		.then(produceMessage)
+		.then(writeRegion)
+		.then(writeResponse)
+		.then(inform)
+		.then(resolve)
+		.catch((error) => {
+			console.log(error)
+		})
 	})
+
 }
 
-function query(region, account, summoner, win) {
+function query(win, region, summoner) {
 	return new Promise((resolve, reject) => {		
-		const url = "https://na1.api.riotgames.com/lol/summoner/v3/summoners/by-name/"
+		//https://na1.api.riotgames.com/lol/summoner/v3/summoners/by-name/Duckiee
 
 		const header = {	
 							"Origin": null,
@@ -27,69 +33,95 @@ function query(region, account, summoner, win) {
 
 		const options = {
 							"hostname": dry.setRegion(region),
-							"path": `/lol/summoner/v3/summoners/${setQuery(account)}${summoner}`,
+							"path": `/lol/summoner/v3/summoners/by-name/${summoner}`,
 							"headers": header,
 							"agent": false,
 						}
 
 		const request = https.request(options, (response) => {
-			if (response.statusCode == 404 || response.statusCode == 400) {
-				let string = `${region}, ${account}, ${summoner} not found`
-				console.log(string)
-				resolve(new Array(string, win, region))
-				return
-			}
-			if (response.statusCode == 403) {
-				console.log("riot developer key expired")
-				resolve(new Array("riot developer key expired", win , region))
-				return
-			}
 			let data = ""
 			response.on('data', (chunk) => {
 				data += chunk
 			})
 			response.on('end', () => {
 				data = JSON.parse(data)
-				resolve(new Array(data, win, region))				
+				resolve(new Array(win, region, data))				
 			})
 		})
 		.on('error', (error) => {
-			console.log("")
 			reject(error)
 		})
 		request.end()
 	})
 }
 
-function setQuery(account) {
-	switch (account) {
-		case "Account id":
-			return "by-account/"
-		case "Summoner name": 
-			return "by-name/"
-		case "Summoner id":
-			return ""
-	}
+function produceMessage(a){
+	return new Promise((resolve,reject)=>{
+		let win = a[0]
+		let region = a[1]
+		let response = a[2]
+
+		if(typeof(response['name']) === 'string') resolve(new Array(win, region, response, 'ok'))
+		
+		let statusCode = response['status']['status_code']
+		switch(statusCode) {
+			case 400:
+				resolve(new Array(win, region, response, '400 was thrown. Bad Request'))
+			case 403:
+				resolve(new Array(win, region, response, '403 was thrown. Forbidden. old riotgames api key'))
+			case 404:
+				resolve(new Array(win, region, response, '404 was thrown. Not found'))
+			case 415:
+				resolve(new Array(win, region, response, '415 was thrown. Unsupported Media Type'))
+			case 429:
+				resolve(new Array(win, region, response, '429 was thrown. Rate Limit Exceeded'))
+			case 500:
+				resolve(new Array(win, region, response, '500 was thrown. Internal Server Error'))
+			default:
+				resolve(new Array(win, region, response, 'Something went wrong'))
+		}
+		
+	})
 }
 
-// array[0] = summoner json
-// array[1] = window
-// array[2] = region
-function write(array){
+function writeRegion(a){
 	return new Promise((resolve, reject) => {
-		let s = JSON.stringify(array[0]) + "\n" + array[2]
-		fs.writeFile('./txt/summoner.txt', s, (error) => {
-			if (error) reject(error)
-			else resolve(new Array(array[0], array[1]))
+		let win = a[0]
+		let region = a[1]
+		let response = a[2]
+		let message = a[3]
+
+		fs.writeFile('./txt/region.txt', region, error=>{
+			if(error) reject(error)
+			resolve(a)
 		})
 	})
 }
 
-// array[0] = summoner json
-// array[1] = window
-function inform(array) {
+function writeResponse(a){
+	return new Promise((resolve,reject)=>{
+		let win = a[0]
+		let region = a[1]
+		let response = a[2]
+		let message = a[3]
+
+		fs.writeFile('./txt/summoner.txt', JSON.stringify(response), error=>{
+			if(error) reject(error)
+			resolve(a)
+		})
+	})
+}
+
+function inform(a) {
 	return new Promise((resolve, reject) => {
-		array[1].webContents.send("summoner", array[0])
-		resolve()	
+		let win = a[0]
+		let region = a[1]
+		let response = a[2]
+		let message = a[3]
+
+		win.webContents.send('summoner', message)
+
+		if(message === 'ok') resolve(new Array(win, region, response))
+		else console.log('cannot proceed. summoner#inform')
 	})
 }
