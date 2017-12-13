@@ -8,17 +8,17 @@ const location = require('./back/location.js')
 
 const createChampionSelect = require('./championselect/createChampionSelect.js')
 
-const league = require('./league/league.js')
+const client = require('./league/client.js')
 
 const createOp = require('./op/createOp.js')
 const readOp = require('./op/readOp.js')
 
 const championMastery = require('./riotgames/championMastery.js')
 const champions = require('./riotgames/champions.js')
-// const league
+const league = require('./riotgames/league.js')
 // const lolStaticData
 // const lolStatus
-// const match
+const match = require('./riotgames/match.js')
 // const spectator
 const summoner = require('./riotgames/summoner.js')
 // const thirdPartyCode
@@ -95,8 +95,10 @@ ipcMain.on('championselect', event=>{
 
 ipcMain.on('riotgames', (event, region, s)=>{
 	summoner.initial(win, region, s)
-	.then(champions.initial)
 	.then(championMastery.initial)
+	.then(league.initial)
+	.then(match.initial)
+	.then(champions.initial)
 })
 
 //////////////////////////////////////////////////////////////////////////////////

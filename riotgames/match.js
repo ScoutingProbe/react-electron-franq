@@ -1,10 +1,10 @@
+const dry = require('../back/dry.js')
 const https = require('https')
 const fs = require('fs')
-const dry = require('../back/dry.js')
 
 module.exports.initial = function(a){
 	return new Promise((resolve,reject)=>{
-		requestChampionMastery(a)
+		requestMatch(a)
 		.then(produceMessage)
 		.then(write)
 		.then(inform)
@@ -15,17 +15,13 @@ module.exports.initial = function(a){
 	})
 }
 
-module.exports.getChampionMasteryForSummoner = function(a){
-	console.log('championMastery#getChampionMasteryForSummoner')
-}
-
-function requestChampionMastery(a){
-	let win = a[0]
-	let region = a[1]
-	let summoner = a[2]
-
+function requestMatch(a){
 	return new Promise((resolve,reject)=>{
-		//https://na1.api.riotgames.com/lol/champion-mastery/v3/champion-masteries/by-summoner/24481735
+		let win = a[0]
+		let region = a[1]
+		let summoner = a[2]
+
+		//https://na1.api.riotgames.com/lol/match/v3/matchlists/by-account/24481735/recent
 		const header = {	
 							"Origin": null,
 							"Accept-Charset": "application/x-www-form-urlencoded; charset=UTF-8",
@@ -35,7 +31,7 @@ function requestChampionMastery(a){
 
 		const options = {
 							"hostname": dry.setRegion(region),
-							"path": `/lol/champion-mastery/v3/champion-masteries/by-summoner/${summoner['id']}`,
+							"path": `/lol/match/v3/matchlists/by-account/${summoner['accountId']}/recent`,
 							"headers": header,
 							"agent": false,
 						}
@@ -53,7 +49,7 @@ function requestChampionMastery(a){
 			reject(error)
 		})
 
-		request.end()
+		request.end()	
 	})
 }
 
@@ -64,7 +60,9 @@ function produceMessage(a){
 		let summoner = a[2]
 		let response = a[3]
 
-		if(typeof(response[0]['championLevel']) === 'number') resolve(new Array(win, region, summoner, response, 'ok'))
+		if(typeof(response['matches']) === 'object'){
+			resolve(new Array(win, region, summoner, response, 'ok'))
+		}
 		else {
 			let statusCode = response['status']['status_code']
 			switch(statusCode) {
@@ -88,17 +86,13 @@ function produceMessage(a){
 }
 
 function write(a){
-	return new Promise((resolve,reject)=>{
-		let win = a[0]
-		let region = a[1]
-		let summoner = a[2]
+	return new Promise((resolve, reject)=>{
 		let response = a[3]
-		let message = a[4]
 
-		fs.writeFile('./txt/championMastery.txt', JSON.stringify(response), error=>{
+		fs.writeFile('./txt/match.txt', JSON.stringify(response), error=>{
 			if(error) reject(error)
-			resolve(new Array(win, region, summoner, message))
-		})		
+			resolve(new Array(a[0], a[1], a[2], a[4]))
+		})
 	})
 }
 
@@ -109,8 +103,9 @@ function inform(a){
 		let summoner = a[2]
 		let message = a[3]
 
-		win.webContents.send('championMastery', message)
+		win.webContents.send('match', message)
+
 		if(message === 'ok') resolve(new Array(win, region, summoner))
-		else console.log('cannot proceed. championMastery#inform')
+		else console.log('cannot proceed. match#inform')
 	})
 }

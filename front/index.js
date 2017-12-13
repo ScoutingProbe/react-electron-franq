@@ -63,6 +63,21 @@ ipcRenderer.on('summoner', (event, message)=>{
 	$('#summoner-message').html(html)
 })
 
+ipcRenderer.on('championMastery', (event, message)=>{
+	let html = `<span>${message}</span>`
+	$('#championMastery-message').html(html)
+})
+
+ipcRenderer.on('league', (event, message)=>{
+	let html = `<span>${message}</span>`
+	$('#league-message').html(html)
+})
+
+ipcRenderer.on('match', (event, message)=>{
+	let html = `<span>${message}</span>`
+	$('#match-message').html(html)
+})
+
 ipcRenderer.on('champions', (event, message)=>{
 	let html = `<span>${message}</span>`
 	$('#champions-message').html(html)
