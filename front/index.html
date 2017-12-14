@@ -3,9 +3,8 @@
   <head>
     <meta charset='utf-8'/>
     <title>Pickban configuration</title>
-    <script type='text/javascript' src="./index.js"></script>
+
     <link rel='stylesheet' type='text/css' href='./index.css'/>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   </head>
   <body>
     <div>
@@ -24,17 +23,6 @@
         <input type='text' id='location' style='width:355px' value='C:\Riot Games\League of Legends'/>
         <button id='location-submit'>Location</button>
         <span id='feedback-location'></span>
-      </div>
-    </div>
-
-    <div id='scrape' class='form'>
-      <div> 
-        <button id='op-update'>op.gg</button>
-        <span id='op-message'>op.gg loading...</span>
-      </div>
-      <div> 
-        <button id='championselect-update'>championselect</button>
-        <span id='championselect-message'>championselect.net loading...</span> 
       </div>
     </div>
 
@@ -82,17 +70,28 @@
       </div>
 
       <div>
-        <button id='riotgames'>Request Riot Games</button>
+        <button id='riotgames'>Riot Games</button>
       </div>
+    </div> 
 
+    <div id='scrape' class='form'>
+      <div> 
+        <button id='op-update'>op.gg</button>
+        <span id='op-message'>op.gg loading...</span>
+      </div>
+      <div> 
+        <button id='championselect-update'>championselect</button>
+        <span id='championselect-message'>championselect.net loading...</span> 
+      </div>
     </div>
-
     
 
     <div>
       <h1>Your champion masteries</h1>
-      <span id='championMastery-success'>champion masteries loading...</span>
+      <div id='championMasteries'>
+      </div>
     </div>
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="./index.js"></script>
   </body>
 </html>

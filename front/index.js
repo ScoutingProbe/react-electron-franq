@@ -25,7 +25,7 @@ $(document).ready(function(){
 				$('#location').val())
 	ipcRenderer.send('op')
 	ipcRenderer.send('championselect')
-	//ipcRenderer.send('championMastery')
+	ipcRenderer.send('getChampionMastery')
 })
 
 ipcRenderer.on('location', (event, message) => {
@@ -82,3 +82,27 @@ ipcRenderer.on('champions', (event, message)=>{
 	let html = `<span>${message}</span>`
 	$('#champions-message').html(html)
 })
+
+ipcRenderer.on('getChampionMastery', (event, masteries)=>{
+	let html = ``
+	for(let mastery of masteries){
+		html += `<div class='championCard'>
+					<img class='championImage' src='${mastery['loadingImage']}' alt='champion image'>
+			 		<div class='championText'>
+			 			<p>${mastery['name']} ${mastery['title']}</p>
+			 			${orderedListFromArray(mastery['enemytips'])}
+			 			${orderedListFromArray(mastery['allytips'])}
+			 			<p>${mastery['championLevel']}</p>
+			 			<p>${mastery['lastPlayTimeHuman'][0]} ${mastery['lastPlayTimeHuman'][1]}</p>
+			 		</div>
+			 	</div>`
+	}
+	$('#championMasteries').html(html)
+})
+
+function orderedListFromArray(array){
+	let html = `<ol>`
+	for(let a of array)	html += `	<li>${a}</li>`
+	html += `</ol>`
+	return html
+}

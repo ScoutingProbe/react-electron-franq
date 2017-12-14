@@ -21,6 +21,8 @@ function requestChampions(a){
 		let region = a[1]
 		let summoner = a[2]
 //https://na1.api.riotgames.com/lol/static-data/v3/champions?locale=en_US&tags=allytips&tags=blurb&tags=enemytips&tags=format&tags=image&tags=keys&tags=lore&dataById=false
+//allytips, blurb, enemytips, format, image, keys, lore
+
 		const header = {	
 							"Origin": null,
 							"Accept-Charset": "application/x-www-form-urlencoded; charset=UTF-8",

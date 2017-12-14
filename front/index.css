@@ -20,3 +20,22 @@ a {
 .form{
 	padding: 10px;
 }
+
+
+#championMasteries{
+
+}
+
+.championCard{
+	border: 5px solid yellow;
+}
+
+.championImage{
+	width:150px;
+	border: 5px solid pink;
+}
+.championText{
+	float:right;
+	padding: 10px;
+	border: 5px solid blue;
+}
