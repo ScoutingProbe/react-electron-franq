@@ -22,20 +22,14 @@ $(document).ready(function(){
 	})
 
 	$('#championKey').change(()=>{
-		alert($('#championKey').find(':selected').text())
-		ipcRenderer.send('getChampionMastery',
-							$('#championKey').find(':selected').text())
-	})
-
-	$('#championKey').click(()=>{
-		alert('hi')
+		ipcRenderer.send('getChampionMastery', $('#championKey').val())
 	})
 
 	ipcRenderer.send('location',
 				$('#location').val())
 	ipcRenderer.send('op')
 	ipcRenderer.send('championselect')
-	ipcRenderer.send('getChampionMastery')
+	ipcRenderer.send('getChampionMastery', $('#championKey').val())
 })
 
 ipcRenderer.on('location', (event, message) => {
@@ -94,14 +88,7 @@ ipcRenderer.on('champions', (event, message)=>{
 })
 
 ipcRenderer.on('getChampionMastery', (event, masteries)=>{
-	let html = `<div id='sortMasteries' class='form'>
-					<span>Sort:  high over low, recent over past</span>
-				 	<select id='championKey'>
-				 		<option>championLevel</option>
-				 		<option>championPoints</option>
-				 		<option selected='true'>lastPlayTime</option>
-				 	</select>
-			 	</div>`
+	let html = ``
 	for(let mastery of masteries){
 		html += `<div class='championCard'>
 					<img class='championImage' src='${mastery['loadingImage']}' alt='champion image'>

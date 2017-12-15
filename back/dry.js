@@ -1,4 +1,4 @@
-module.exports.RIOT_DEVELOPER_KEY = "RGAPI-7e26a996-0453-4531-a8fd-824f9dc508e4"
+module.exports.RIOT_DEVELOPER_KEY = "RGAPI-204baa55-7f9b-4ca9-a64b-7f34dd6368ca"
 
 module.exports.setRegion = function setRegion(region) {
 	switch (region) {

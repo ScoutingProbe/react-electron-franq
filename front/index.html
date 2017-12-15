@@ -10,7 +10,7 @@
     <div>
       <a href='./match.html'>Match</a>
     </div>
-    <div class='form'>
+    <form class='form'>
       <div>
         <select>
           <option>English</option>
@@ -18,15 +18,17 @@
           <option>Chinese</option>
         </select>
       </div>
+    </form>
 
+    <form class='form'>
       <div>
         <input type='text' id='location' style='width:355px' value='C:\Riot Games\League of Legends'/>
         <button id='location-submit'>Location</button>
         <span id='feedback-location'></span>
       </div>
-    </div>
+    </form>
 
-    <div id='riotgames' class='form'>
+    <form id='riotgames' class='form'>
       <div>
         <select id='region'>
           <option>RU</option>
@@ -72,10 +74,10 @@
       <div>
         <button id='riotgames'>Riot Games</button>
       </div>
-    </div> 
+    </form> 
 
-    <div id='scrape' class='form'>
-      <div> 
+    <form id='scrape' class='form'>
+      <div>
         <button id='op-update'>op.gg</button>
         <span id='op-message'>op.gg loading...</span>
       </div>
@@ -83,11 +85,18 @@
         <button id='championselect-update'>championselect</button>
         <span id='championselect-message'>championselect.net loading...</span> 
       </div>
-    </div>
+    </form>
     
 
     <div>
-      <h1>Your champion masteries</h1>
+      <div id='sortMasteries' class='form'>
+          <span>Sort:  high over low, recent over past</span>
+          <select id='championKey'>
+            <option selected='true'>championLevel</option>
+            <option>championPoints</option>
+            <option>lastPlayTime</option>
+          </select>
+      </div>
       <div id='championMasteries'>
       </div>
     </div>
