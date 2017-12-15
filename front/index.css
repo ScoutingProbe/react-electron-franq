@@ -27,15 +27,13 @@ a {
 }
 
 .championCard{
-	border: 5px solid yellow;
+	width: 1000px;
+	height: 500px;
 }
 
 .championImage{
-	width:150px;
-	border: 5px solid pink;
 }
 .championText{
+	width: 600px;
 	float:right;
-	padding: 10px;
-	border: 5px solid blue;
 }

@@ -1,7 +1,7 @@
 const fs = require('fs')
 
-module.exports.initial = function(win){
-	readMastery(win)
+module.exports.initial = function(win, key){
+	readMastery(win, key)
 	.then(readChampions)
 	.then(foldChampionsIntoMastery)
 	.then(write)
@@ -11,11 +11,11 @@ module.exports.initial = function(win){
 	})
 }
 
-function readMastery(win){
+function readMastery(win, key){
 	return new Promise((resolve, reject)=>{
 		fs.readFile('./txt/championMastery.txt', 'utf-8', (error, data)=>{
 			if(error) reject(error)
-			resolve(new Array(win, JSON.parse(data)))
+			resolve(new Array(win, key, JSON.parse(data)))
 		})
 	})
 }
@@ -24,15 +24,15 @@ function readChampions(a){
 	return new Promise((resolve, reject)=>{
 		fs.readFile('./txt/champions.txt', 'utf-8', (error, data)=>{
 			if(error) reject(error)
-			resolve(new Array(a[0], a[1], JSON.parse(data)))
+			resolve(new Array(a[0], a[1], a[2], JSON.parse(data)))
 		})
 	})
 }
 
 function foldChampionsIntoMastery(a){
 	return new Promise((resolve, reject)=>{
-		let masteries = a[1]
-		let champions = a[2]
+		let masteries = a[2]
+		let champions = a[3]
 
 		for(let mastery of masteries){
 			let championId = mastery['championId']
@@ -49,6 +49,7 @@ function foldChampionsIntoMastery(a){
 			mastery['blurb'] = champion['blurb']
 			humanizeTime(mastery['lastPlayTime'], mastery)
 		}
+		sortMasteries(masteries, a[1])
 		resolve(new Array(a[0], masteries))
 	})
 }
@@ -62,6 +63,20 @@ function humanizeTime(epochPlayTime, mastery){
 		resolve(mastery)
 	})
 	
+}
+
+function sortMasteries(masteries, key){
+	return new Promise((resolve,reject)=>{
+		masteries = masteries.sort((a, b)=>{
+			let valueA = a[key]
+			let valueB = b[key]
+
+			if(valueA < valueB) return 1
+			else if(valueA === valueB) return 0
+			else if(valueA > valueB) return -1
+		})
+		resolve(masteries)
+	})
 }
 
 function write(a){

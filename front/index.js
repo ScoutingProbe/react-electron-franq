@@ -21,6 +21,16 @@ $(document).ready(function(){
 							$('#summoner').val())
 	})
 
+	$('#championKey').change(()=>{
+		alert($('#championKey').find(':selected').text())
+		ipcRenderer.send('getChampionMastery',
+							$('#championKey').find(':selected').text())
+	})
+
+	$('#championKey').click(()=>{
+		alert('hi')
+	})
+
 	ipcRenderer.send('location',
 				$('#location').val())
 	ipcRenderer.send('op')
@@ -84,7 +94,14 @@ ipcRenderer.on('champions', (event, message)=>{
 })
 
 ipcRenderer.on('getChampionMastery', (event, masteries)=>{
-	let html = ``
+	let html = `<div id='sortMasteries' class='form'>
+					<span>Sort:  high over low, recent over past</span>
+				 	<select id='championKey'>
+				 		<option>championLevel</option>
+				 		<option>championPoints</option>
+				 		<option selected='true'>lastPlayTime</option>
+				 	</select>
+			 	</div>`
 	for(let mastery of masteries){
 		html += `<div class='championCard'>
 					<img class='championImage' src='${mastery['loadingImage']}' alt='champion image'>
@@ -92,7 +109,7 @@ ipcRenderer.on('getChampionMastery', (event, masteries)=>{
 			 			<p>${mastery['name']} ${mastery['title']}</p>
 			 			${orderedListFromArray(mastery['enemytips'])}
 			 			${orderedListFromArray(mastery['allytips'])}
-			 			<p>${mastery['championLevel']}</p>
+			 			<p>Level ${mastery['championLevel']}, Points ${mastery['championPoints']}</p>
 			 			<p>${mastery['lastPlayTimeHuman'][0]} ${mastery['lastPlayTimeHuman'][1]}</p>
 			 		</div>
 			 	</div>`
