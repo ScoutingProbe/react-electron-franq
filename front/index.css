@@ -17,8 +17,8 @@ a {
 	color: blue;
 }
 
-.form{
-	padding: 10px;
+form {
+	padding-bottom: 20px;
 }
 
 
@@ -27,7 +27,7 @@ a {
 }
 
 .championCard{
-	width: 1000px;
+	width: 960px;
 	height: 500px;
 }
 

@@ -82,6 +82,9 @@ ipcMain.on('riotgames', (event, region, s)=>{
 	.then(league.initial)
 	.then(match.initial)
 	.then(champions.initial)
+	.catch(error=>{
+		console.log(error)
+	})
 })
 
 //////////////////////////////////////////////////////////////////////////////////

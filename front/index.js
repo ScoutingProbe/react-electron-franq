@@ -3,30 +3,27 @@ let $ = require('jquery')
 
 $(document).ready(function(){
 	$('#location-submit').click(() => {
-		ipcRenderer.send('location',
-						$('#location').val())
+		ipcRenderer.send('location', $('#location').val())
 	})
 
-	$('#op-update').click(()=>{
+	$('#op-submit').click(()=>{
 		ipcRenderer.send('op')
 	})
 
-	$('#championselect-update').click(()=>{
+	$('#championselect-submit').click(()=>{
 		ipcRenderer.send('championselect')
 	})
 
-	$('#riotgames').click(()=>{
-		ipcRenderer.send('riotgames',
-							$('#region').val(),
-							$('#summoner').val())
+	$('#riotgames-submit').click(()=>{
+		ipcRenderer.send('riotgames', $('#region').val(), $('#summoner').val())
+		ipcRenderer.send('getChampionMastery', $('#championKey').val())
 	})
 
 	$('#championKey').change(()=>{
 		ipcRenderer.send('getChampionMastery', $('#championKey').val())
 	})
 
-	ipcRenderer.send('location',
-				$('#location').val())
+	ipcRenderer.send('location', $('#location').val())
 	ipcRenderer.send('op')
 	ipcRenderer.send('championselect')
 	ipcRenderer.send('getChampionMastery', $('#championKey').val())
@@ -110,3 +107,8 @@ function orderedListFromArray(array){
 	html += `</ol>`
 	return html
 }
+
+ipcRenderer.on('summoner-reminder', (event, summoner)=>{
+	alert(summoner['name'])
+	$('#summoner').val(summoner['name'])
+})

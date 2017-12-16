@@ -1,1 +1,1 @@
-{"id":24481735,"accountId":38833060,"name":"Duckiee","profileIconId":3233,"revisionDate":1513364355000,"summonerLevel":50}
+{"id":20374342,"accountId":33316941,"name":"MistGunner","profileIconId":659,"revisionDate":1513380031000,"summonerLevel":32}

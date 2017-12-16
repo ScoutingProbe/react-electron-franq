@@ -20,15 +20,15 @@
       </div>
     </form>
 
-    <form class='form'>
+    <form>
       <div>
         <input type='text' id='location' style='width:355px' value='C:\Riot Games\League of Legends'/>
-        <button id='location-submit'>Location</button>
+        <input type='submit' value='location' id='location-submit'/>
         <span id='feedback-location'></span>
       </div>
     </form>
 
-    <form id='riotgames' class='form'>
+    <form id='riotgames'>
       <div>
         <select id='region'>
           <option>RU</option>
@@ -43,7 +43,7 @@
           <option>LA1</option>
           <option>LA2</option>
         </select>
-        <input type='text' id='summoner' value='Duckiee'/>
+        <input type='text' id='summoner'/>
       </div>
 
       <div>
@@ -72,31 +72,31 @@
       </div>
 
       <div>
-        <button id='riotgames'>Riot Games</button>
+        <input type='submit' value='riot games' id='riotgames-submit'/>
       </div>
     </form> 
 
-    <form id='scrape' class='form'>
+    <form id='scrape'>
       <div>
-        <button id='op-update'>op.gg</button>
+        <input type='submit' value='op.gg' id='op-submit'/>
         <span id='op-message'>op.gg loading...</span>
       </div>
       <div> 
-        <button id='championselect-update'>championselect</button>
+        <input type='submit' value='championselect' id='championselect-submit'/>
         <span id='championselect-message'>championselect.net loading...</span> 
       </div>
     </form>
     
 
     <div>
-      <div id='sortMasteries' class='form'>
+      <form id='sortMasteries'>
           <span>Sort:  high over low, recent over past</span>
           <select id='championKey'>
             <option selected='true'>championLevel</option>
             <option>championPoints</option>
             <option>lastPlayTime</option>
           </select>
-      </div>
+      </form>
       <div id='championMasteries'>
       </div>
     </div>

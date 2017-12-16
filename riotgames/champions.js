@@ -107,6 +107,7 @@ function inform(a){
 		let summoner = a[2]
 		let message = a[3]
 		win.webContents.send('champions', message)
+		win.webContents.send('summoner-reminder', summoner)
 		if(message === 'ok') resolve(new Array(win, region, summoner))
 		else console.log('cannot proceed champions#inform')
 	})
