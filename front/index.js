@@ -6,12 +6,8 @@ $(document).ready(function(){
 		ipcRenderer.send('location', $('#location').val())
 	})
 
-	$('#op-submit').click(()=>{
-		ipcRenderer.send('op')
-	})
-
-	$('#championselect-submit').click(()=>{
-		ipcRenderer.send('championselect')
+	$('#lolcounter-submit').click(()=>{
+		ipcRenderer.send('lolcounter')
 	})
 
 	$('#riotgames-submit').click(()=>{
@@ -24,8 +20,6 @@ $(document).ready(function(){
 	})
 
 	ipcRenderer.send('location', $('#location').val())
-	ipcRenderer.send('op')
-	ipcRenderer.send('championselect')
 	ipcRenderer.send('getChampionMastery', $('#championKey').val())
 })
 
@@ -49,15 +43,6 @@ http://ddragon.leagueoflegends.com/cdn/6.24.1/img/champion/Aatrox.png
 <p>pings</p>
 <p>honor</p>
 */
-
-ipcRenderer.on('op-inform', (event, message)=>{
-	$('#op-message').html(message)
-})
-
-ipcRenderer.on('championselect', (event, message)=>{
-	let html = `<span>${message}</span>`
-	$('#championselect-message').html(html)
-})
 
 ipcRenderer.on('summoner', (event, message)=>{
 	let html = `<span>${message}</span>`
@@ -109,6 +94,5 @@ function orderedListFromArray(array){
 }
 
 ipcRenderer.on('summoner-reminder', (event, summoner)=>{
-	alert(summoner['name'])
 	$('#summoner').val(summoner['name'])
 })

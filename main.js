@@ -7,12 +7,10 @@ const fs = require('fs')
 const location = require('./back/location.js')
 const getChampionMastery = require('./back/getChampionMastery.js')
 
-const createChampionSelect = require('./championselect/createChampionSelect.js')
-
 const client = require('./league/client.js')
 
-const createOp = require('./op/createOp.js')
-const readOp = require('./op/readOp.js')
+const lolcounter = require('./lolcounter/lolcounter.js')
+const scrape = require('./lolcounter/scrape.js')
 
 const championMastery = require('./riotgames/championMastery.js')
 const champions = require('./riotgames/champions.js')
@@ -89,20 +87,11 @@ ipcMain.on('riotgames', (event, region, s)=>{
 
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
-// op, championselect refresh buttons
+// scrape refresh buttons
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
-
-ipcMain.on('op', (event)=>{
-	console.log('op under construction')
-	win.webContents.send('op-inform', '<span>op under construction</span>')
-	//createOp.initial(win)
-})
-
-ipcMain.on('championselect', event=>{
-	console.log('championselect under construction')
-	win.webContents.send('championselect', 'championselect under construction')
-	//createChampionSelect.initial(win)
+ipcMain.on('lolcounter', event=>{
+	lolcounter.initial(win)
 })
 
 //////////////////////////////////////////////////////////////////////////////////
