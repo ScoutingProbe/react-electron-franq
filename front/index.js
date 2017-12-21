@@ -8,19 +8,20 @@ $(document).ready(function(){
 
 	$('#lolcounter-submit').click(()=>{
 		ipcRenderer.send('lolcounter')
+		ipcRenderer.send('summonery', $('#championKey').val())
 	})
 
 	$('#riotgames-submit').click(()=>{
 		ipcRenderer.send('riotgames', $('#region').val(), $('#summoner').val())
-		ipcRenderer.send('getChampionMastery', $('#championKey').val())
+		ipcRenderer.send('summonery', $('#championKey').val())
 	})
 
 	$('#championKey').change(()=>{
-		ipcRenderer.send('getChampionMastery', $('#championKey').val())
+		ipcRenderer.send('summonery', $('#championKey').val())
 	})
 
 	ipcRenderer.send('location', $('#location').val())
-	ipcRenderer.send('getChampionMastery', $('#championKey').val())
+	ipcRenderer.send('summonery', $('#championKey').val())
 })
 
 ipcRenderer.on('location', (event, message) => {
@@ -69,7 +70,7 @@ ipcRenderer.on('champions', (event, message)=>{
 	$('#champions-message').html(html)
 })
 
-ipcRenderer.on('getChampionMastery', (event, masteries)=>{
+ipcRenderer.on('summonery', (event, masteries)=>{
 	let html = ``
 	for(let mastery of masteries){
 		html += `<div class='championCard'>
@@ -95,4 +96,9 @@ function orderedListFromArray(array){
 
 ipcRenderer.on('summoner-reminder', (event, summoner)=>{
 	$('#summoner').val(summoner['name'])
+})
+
+ipcRenderer.on('lolcounter', (event, message)=>{
+	let html =`<span>${message}</span>`
+	$('#lolcounter-message').html(html)
 })

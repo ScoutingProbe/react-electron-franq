@@ -5,7 +5,7 @@ const fs = require('fs')
 
 
 const location = require('./back/location.js')
-const getChampionMastery = require('./back/getChampionMastery.js')
+const summonery = require('./back/summonery.js')
 
 const client = require('./league/client.js')
 
@@ -100,8 +100,8 @@ ipcMain.on('lolcounter', event=>{
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 
-ipcMain.on('getChampionMastery', (event, key)=>{
-	getChampionMastery.initial(win, key)
+ipcMain.on('summonery', (event, key)=>{
+	summonery.initial(win, key)
 })
 
 

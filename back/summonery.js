@@ -3,7 +3,9 @@ const fs = require('fs')
 module.exports.initial = function(win, key){
 	readMastery(win, key)
 	.then(readChampions)
-	.then(foldChampionsIntoMastery)
+	.then(foldChampionsIntoSummonery)
+	.then(readLolcounter)
+	.then(foldLolcounterIntoSummonery)
 	.then(write)
 	.then(inform)
 	.catch(error=>{
@@ -29,7 +31,7 @@ function readChampions(a){
 	})
 }
 
-function foldChampionsIntoMastery(a){
+function foldChampionsIntoSummonery(a){
 	return new Promise((resolve, reject)=>{
 		let masteries = a[2]
 		let champions = a[3]
@@ -79,9 +81,31 @@ function sortMasteries(masteries, key){
 	})
 }
 
+function readLolcounter(a){
+	return new Promise((resolve,reject)=>{
+		fs.readFile('./txt/lolcounter.txt', 'utf-8', (error,data)=>{
+			resolve(new Array(a[0], a[1], JSON.parse(data)))
+		})
+	})
+}
+
+function foldLolcounterIntoSummonery(a){
+	return new Promise((resolve,reject)=>{
+		let win = a[0]
+		let masteries = a[1]
+		let lolcounter = a[2]
+
+		for(let mastery of masteries){
+			let id = mastery['championId']
+			mastery['lolcounter'] = lolcounter[id]
+		}
+		resolve(new Array(a[0], masteries))
+	})
+}
+
 function write(a){
 	return new Promise((resolve,reject)=>{
-		fs.writeFile('./txt/championMasteryAugment.txt', JSON.stringify(a[1]), error=>{
+		fs.writeFile('./txt/summonery.txt', JSON.stringify(a[1]), error=>{
 			if(error) reject(error)
 			resolve(a)
 		})
@@ -91,7 +115,7 @@ function write(a){
 
 function inform(a){
 	return new Promise((resolve,reject)=>{
-		a[0].webContents.send('getChampionMastery', a[1])
+		a[0].webContents.send('summonery', a[1])
 		resolve()
 	})
 }

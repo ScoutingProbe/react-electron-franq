@@ -1,6 +1,6 @@
 const fs = require('fs')
 
-module.exports.RIOT_DEVELOPER_KEY = "RGAPI-204baa55-7f9b-4ca9-a64b-7f34dd6368ca"
+module.exports.RIOT_DEVELOPER_KEY = "RGAPI-5b6860ee-b1c9-4a86-8556-8415eabb64a2"
 
 module.exports.setRegion = function(region) {
 	switch (region) {
@@ -42,6 +42,8 @@ module.exports.getId = function(name){
 		let key = keys[id].toLowerCase()
 		if(name === key) return id
 	}
+
+	if(name === 'wukong') return 63
 
 	throw new Error(`scrape#getId ${name}`)	
 }
