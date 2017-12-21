@@ -11,8 +11,6 @@ h1 {
 	font-family: "Times New Roman", Times, serif;
 }
 
-
-
 a {
 	color: blue;
 }
@@ -28,12 +26,19 @@ form {
 
 .championCard{
 	width: 960px;
-	height: 500px;
+	height: 960px;
+	border: 1px solid blue;
 }
 
 .championImage{
 }
+
 .championText{
 	width: 600px;
 	float:right;
+}
+
+.championLine{
+	margin: 3px;
+	float: left;
 }

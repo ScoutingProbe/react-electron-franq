@@ -1,7 +1,7 @@
 const fs = require('fs')
 
-module.exports.initial = function(win, key){
-	readMastery(win, key)
+module.exports.initial = function(win, key, lane, count){
+	readMastery(win, key, lane, count)
 	.then(readChampions)
 	.then(foldChampionsIntoSummonery)
 	.then(readLolcounter)
@@ -13,11 +13,11 @@ module.exports.initial = function(win, key){
 	})
 }
 
-function readMastery(win, key){
+function readMastery(win, key, lane, count){
 	return new Promise((resolve, reject)=>{
 		fs.readFile('./txt/championMastery.txt', 'utf-8', (error, data)=>{
 			if(error) reject(error)
-			resolve(new Array(win, key, JSON.parse(data)))
+			resolve(new Array(win, key, lane, count, JSON.parse(data)))
 		})
 	})
 }
@@ -26,15 +26,20 @@ function readChampions(a){
 	return new Promise((resolve, reject)=>{
 		fs.readFile('./txt/champions.txt', 'utf-8', (error, data)=>{
 			if(error) reject(error)
-			resolve(new Array(a[0], a[1], a[2], JSON.parse(data)))
+			a.push(JSON.parse(data))
+			resolve(a)
 		})
 	})
 }
 
 function foldChampionsIntoSummonery(a){
 	return new Promise((resolve, reject)=>{
-		let masteries = a[2]
-		let champions = a[3]
+		let win = a[0]
+		let key = a[1]
+		let lane = a[2]
+		let count = a[3]
+		let masteries = a[4]
+		let champions = a[5]
 
 		for(let mastery of masteries){
 			let championId = mastery['championId']
@@ -51,8 +56,8 @@ function foldChampionsIntoSummonery(a){
 			mastery['blurb'] = champion['blurb']
 			humanizeTime(mastery['lastPlayTime'], mastery)
 		}
-		sortMasteries(masteries, a[1])
-		resolve(new Array(a[0], masteries))
+		sortMasteries(masteries, key)
+		resolve(new Array(win, lane, count, masteries))
 	})
 }
 
@@ -84,7 +89,8 @@ function sortMasteries(masteries, key){
 function readLolcounter(a){
 	return new Promise((resolve,reject)=>{
 		fs.readFile('./txt/lolcounter.txt', 'utf-8', (error,data)=>{
-			resolve(new Array(a[0], a[1], JSON.parse(data)))
+			a.push(JSON.parse(data))
+			resolve(a)
 		})
 	})
 }
@@ -92,14 +98,19 @@ function readLolcounter(a){
 function foldLolcounterIntoSummonery(a){
 	return new Promise((resolve,reject)=>{
 		let win = a[0]
-		let masteries = a[1]
-		let lolcounter = a[2]
+		let lane = a[1]
+		let count = a[2]
+		let summonery = a[3]
+		let lolcounter = a[4]
 
-		for(let mastery of masteries){
-			let id = mastery['championId']
-			mastery['lolcounter'] = lolcounter[id]
+		for(let summoner of summonery){
+			let id = summoner['championId']
+			summoner['weak'] = lolcounter[id]['weak'][lane].slice(0, count)
+			summoner['strong'] = lolcounter[id]['strong'][lane].slice(0, count)
+			summoner['even'] = lolcounter[id]['even'][lane].slice(0, count)
+			summoner['good'] = lolcounter[id]['good'][lane].slice(0, count)
 		}
-		resolve(new Array(a[0], masteries))
+		resolve(new Array(a[0], summonery))
 	})
 }
 

@@ -84,17 +84,24 @@
     </form>
     
 
-    <div>
-      <form id='sortMasteries'>
-          <span>Sort:  high over low, recent over past</span>
-          <select id='championKey'>
-            <option selected='true'>championLevel</option>
-            <option>championPoints</option>
-            <option>lastPlayTime</option>
-          </select>
-      </form>
-      <div id='championMasteries'>
-      </div>
+    <form id='sortMasteries'>
+        <select id='championKey'>
+          <option selected='true'>championLevel</option>
+          <option>championPoints</option>
+          <option>lastPlayTime</option>
+        </select>
+        <select id='number'>
+          <option selected='true'>5</option>
+          <option>6</option>
+        </select>
+        <input type='radio' name='lane' value='general' checked/>general
+        <input type='radio' name='lane' value='top'/>top
+        <input type='radio' name='lane' value='mid'/>middle
+        <input type='radio' name='lane' value='jungle'/>jungle
+        <input type='radio' name='lane' value='bottom'/>bottom
+    </form>
+
+    <div id='championMasteries'>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="./index.js"></script>
