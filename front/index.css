@@ -25,8 +25,8 @@ form {
 }
 
 .championCard{
-	width: 960px;
-	height: 960px;
+	width: 1200px;
+	height: 1000px;
 	border: 1px solid blue;
 }
 
@@ -40,5 +40,14 @@ form {
 
 .championLine{
 	margin: 3px;
+	border: 1px solid pink;
 	float: left;
+}
+
+.cardLine{
+
+}
+
+.lolcounter{
+	float:left;
 }

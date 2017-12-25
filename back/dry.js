@@ -45,5 +45,11 @@ module.exports.getId = function(name){
 
 	if(name === 'wukong') return 63
 
-	throw new Error(`scrape#getId ${name}`)	
+	throw new Error(`dry#getId ${name}`)	
+}
+
+module.exports.getKey = function(id){
+	let data = fs.readFileSync('./txt/champions.txt', 'utf-8')
+	let keys = JSON.parse(data)['keys']
+	return keys[id]
 }

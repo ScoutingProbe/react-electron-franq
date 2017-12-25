@@ -1,5 +1,6 @@
 const {ipcRenderer} = require('electron')
 let $ = require('jquery')
+const dry = require('../back/dry.js')
 
 $(document).ready(function(){
 	$('#location-submit').click(() => {
@@ -8,28 +9,28 @@ $(document).ready(function(){
 
 	$('#lolcounter-submit').click(()=>{
 		ipcRenderer.send('lolcounter')
-		ipcRenderer.send('summonery', $('#championKey').val(), $('input[name=\'lane\']:checked').val(), $('#number').val())
+		ipcRenderer.send('summonery', $('#championKey').val(), $('input[name=lane]:checked').val(), $('#number').val())
 	})
 
 	$('#riotgames-submit').click(()=>{
 		ipcRenderer.send('riotgames', $('#region').val(), $('#summoner').val())
-		ipcRenderer.send('summonery', $('#championKey').val(), $('input[name=\'lane\']:checked').val(), $('#number').val())
+		ipcRenderer.send('summonery', $('#championKey').val(), $('input[name=lane]:checked').val(), $('#number').val())
 	})
 
 	$('#championKey').change(()=>{
-		ipcRenderer.send('summonery', $('#championKey').val(), $('input[name=\'lane\']:checked').val(), $('#number').val())
+		ipcRenderer.send('summonery', $('#championKey').val(), $('input[name=lane]:checked').val(), $('#number').val())
 	})
 
 	$('#number').change(()=>{
-		ipcRenderer.send('summonery', $('#championKey').val(), $('input[name=\'lane\']:checked').val(), $('#number').val())
+		ipcRenderer.send('summonery', $('#championKey').val(), $('input[name=lane]:checked').val(), $('#number').val())
 	})
 
 	$('input[type=radio][name=lane]').change(()=>{
-		ipcRenderer.send('summonery', $('#championKey').val(), $('input[name=\'lane\']:checked').val(), $('#number').val())
+		ipcRenderer.send('summonery', $('#championKey').val(), $('input[name=lane]:checked').val(), $('#number').val())
 	})
 
 	ipcRenderer.send('location', $('#location').val())
-	ipcRenderer.send('summonery', $('#championKey').val(), $('input[name=\'lane\']:checked').val(), $('#number').val())
+	ipcRenderer.send('summonery', $('#championKey').val(), $('input[name=lane]:checked').val(), $('#number').val())
 })
 
 ipcRenderer.on('location', (event, message) => {
@@ -78,23 +79,54 @@ ipcRenderer.on('champions', (event, message)=>{
 })
 
 ipcRenderer.on('summonery', (event, masteries)=>{
+	let lane = $('input[name=lane]:checked').val()
 	let html = ``
 	for(let mastery of masteries){
+		let name = mastery['name']
+		let id = mastery['championId']
 		html += `<div class='championCard'>
-					<img class='championImage' src='${mastery['loadingImage']}' alt='champion image'>
-			 		<div class='championText'>
-			 			<p>${mastery['name']} ${mastery['title']}</p>
+					<img class='cardImage' src='${mastery['loadingImage']}' alt='champion image'>
+			 		
+			 		<div class='cardText'>
+			 			<p>${name} ${mastery['title']}</p>
+			 			<p>${mastery['lore']}</p>
 			 			<p>Level ${mastery['championLevel']}, Points ${mastery['championPoints']}</p>
 			 			<p>${mastery['lastPlayTimeHuman'][0]} ${mastery['lastPlayTimeHuman'][1]}</p>
 			 			${orderedListFromArray(mastery['enemytips'])}
 			 			${orderedListFromArray(mastery['allytips'])}
-			 			weak${championLine(mastery['weak'])}
-			 			strong${championLine(mastery['strong'])}
-			 			good${championLine(mastery['good'])}
 			 		</div>
+		 			
+		 			${championLine(mastery['weak'], `${id}-weak-${lane}`)}
+		 			
+		 			${championLine(mastery['strong'], `${id}-strong-${lane}`)}
+		 			
+		 			${championLine(mastery['good'], `${id}-good-${lane}`)}
+		 			
+		 			${championLine(mastery['even'], `${id}-even-${lane}`)}
+
 			 	</div>`
 	}
-	$('#championMasteries').html(html)
+	$('#summonery').html(html)
+
+	for(let mastery of masteries){
+		let name = mastery['name']
+		let relations = ['weak', 'strong', 'good', 'even']
+		//lane already defined above
+		for(let relation of relations){
+			id = `${mastery['championId']}-${relation}-${lane}`
+
+				$(`#${id}`).click(id, (event)=>{
+					let inputId = event.data
+					let idArray = inputId.split('-')
+					let id = idArray[0]
+					let relation = idArray[1]
+					let lane = idArray[2]
+					let slice = $('#number').val()
+					ipcRenderer.send('lolcounter-retry', id, relation, lane, slice)
+				})
+			}
+		
+	}
 })
 
 function orderedListFromArray(array){
@@ -104,16 +136,22 @@ function orderedListFromArray(array){
 	return html
 }
 
-function championLine(champions){
-	if(Object.keys(champions).length === 00 && typeof champions === 'object') return '<div><span>No records</span></div>'
+function championLine(deck, id){
+	if(Object.keys(deck).length === 00 && typeof deck === 'object'){
+		return `<div class='lolcounter' id='${id}-div'>
+					<span>No records ${id}</span>
+					<input type='submit' class='lolcounter-retry' value='retry'
+						id='${id}'/>
+				</div>`
+	}
 	else {
-		let html = `<div>`
-		for(let champion of champions){
-			html += `<div class='item'>
-						<span>${champion['name']} ${champion['upvote']} ${champion['downvote']}</span>
-					</div>`
+		let html = `<div class='lolcounter' id='${id}-div'>
+						<ul>`
+		for(let champion of deck){
+			html += `<li>${champion['name']} ${id}</li>`
 		}
-		html +=  `</div>`
+		html +=  `		</ul>
+					</div>`
 		return html		
 	}
 
@@ -126,4 +164,9 @@ ipcRenderer.on('summoner-reminder', (event, summoner)=>{
 ipcRenderer.on('lolcounter', (event, message)=>{
 	let html =`<span>${message}</span>`
 	$('#lolcounter-message').html(html)
+})
+
+ipcRenderer.on('lolcounter-retry', (event, deck, attributeId)=>{
+	let html = championLine(deck, attributeId)
+	$(`#${attributeId}-div`).replaceWith(html)
 })

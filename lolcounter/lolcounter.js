@@ -22,7 +22,7 @@ module.exports.initial = function(win){
 //http://lolcounter.com/champions/aatrox/weak/bottom
 //http://lolcounter.com/champions/aatrox/strong/${lane}
 //http://lolcounter.com/champions/aatrox/even/${lane}
-//http://lolcounter.com/champions/aatrox/good <-no lane
+//http://lolcounter.com/champions/aatrox/good/${lane}
 
 //http://lolcounter.com/champions/lee-sin
 //http://lolcounter.com/champions/jarvan-iv

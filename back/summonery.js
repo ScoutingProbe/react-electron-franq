@@ -1,4 +1,5 @@
 const fs = require('fs')
+const dry = require('../back/dry.js')
 
 module.exports.initial = function(win, key, lane, count){
 	readMastery(win, key, lane, count)
@@ -105,10 +106,32 @@ function foldLolcounterIntoSummonery(a){
 
 		for(let summoner of summonery){
 			let id = summoner['championId']
-			summoner['weak'] = lolcounter[id]['weak'][lane].slice(0, count)
-			summoner['strong'] = lolcounter[id]['strong'][lane].slice(0, count)
-			summoner['even'] = lolcounter[id]['even'][lane].slice(0, count)
-			summoner['good'] = lolcounter[id]['good'][lane].slice(0, count)
+
+			let weaks = lolcounter[id]['weak'][lane].slice(0, count)
+			for(let weak of weaks){
+				weak['image'] =  `http://ddragon.leagueoflegends.com/cdn/6.24.1/img/champion/${dry.getKey(weak['id'])}.png`
+			}
+
+			let strongs = lolcounter[id]['strong'][lane].slice(0, count)
+			for(let strong of strongs){
+				strong['image'] = `http://ddragon.leagueoflegends.com/cdn/6.24.1/img/champion/${dry.getKey(strong['id'])}.png`
+			}
+
+			let evens = lolcounter[id]['even'][lane].slice(0, count)
+			for(let even of evens){
+				even['image'] = `http://ddragon.leagueoflegends.com/cdn/6.24.1/img/champion/${dry.getKey(even['id'])}.png`
+			}
+
+			let goods = lolcounter[id]['good'][lane].slice(0, count)
+			for(let good of goods){
+				good['image'] = `http://ddragon.leagueoflegends.com/cdn/6.24.1/img/champion/${dry.getKey(good['id'])}.png`
+			}
+
+			summoner['weak'] = weaks
+			summoner['strong'] = strongs
+			
+			summoner['even'] = evens
+			summoner['good'] = goods
 		}
 		resolve(new Array(a[0], summonery))
 	})
