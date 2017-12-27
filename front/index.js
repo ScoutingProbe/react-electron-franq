@@ -3,10 +3,6 @@ let $ = require('jquery')
 const dry = require('../back/dry.js')
 
 $(document).ready(function(){
-	$('#location-submit').click(() => {
-		ipcRenderer.send('location', $('#location').val())
-	})
-
 	$('#lolcounter-submit').click(()=>{
 		ipcRenderer.send('lolcounter')
 		ipcRenderer.send('summonery', $('#championKey').val(), $('input[name=lane]:checked').val(), $('#number').val())
@@ -28,15 +24,10 @@ $(document).ready(function(){
 	$('input[type=radio][name=lane]').change(()=>{
 		ipcRenderer.send('summonery', $('#championKey').val(), $('input[name=lane]:checked').val(), $('#number').val())
 	})
-
-	ipcRenderer.send('location', $('#location').val())
 	ipcRenderer.send('summonery', $('#championKey').val(), $('input[name=lane]:checked').val(), $('#number').val())
 })
 
-ipcRenderer.on('location', (event, message) => {
-	if (message == 'file found') $('#feedback-location').html('&#10003;')
-	else if(message == 'file not found') $('#feedback-location').html('&#10007;')
-})
+
 /*
 http://ddragon.leagueoflegends.com/cdn/img/champion/loading/Aatrox_0.jpg
 http://ddragon.leagueoflegends.com/cdn/6.24.1/img/champion/Aatrox.png

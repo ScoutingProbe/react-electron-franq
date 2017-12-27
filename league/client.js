@@ -1,43 +1,61 @@
 const fs = require('fs')
 
-module.exports.initial = function initial(win){
-	newest(win)
+// C:\fakepath\2017-05-30T20-51-06_6672_LeagueClient.log
+// C:\Riot Games\League of Legends
+// C:\Riot Games\League of Legends\Logs\LeagueClient Logs
+
+module.exports.initial = function initial(win, location){
+	watch(win, location)
 	.then(read)
+	.then(parse)
+	.then(inform)
 	.catch(error=>{
-		console.log(error)
+		console.error(error)
 	})
-
-	//find newest file
-	//read the file
-	//send the message to front
-	//close the json
-	//send the json to front 
-
 }
 
-function newest(win){
+function watch(win, location){
 	return new Promise((resolve,reject)=>{
-		fs.watch('C:\\Riot Games\\League of Legends\\Logs\\LeagueClient Logs', (eventType, filename)=>{
-			console.log(filename)
-			console.log(eventType)
-			if(filename.includes('LeagueClient.log')) resolve(filename)
-			
+		fs.watch(location, (event, file)=>{
+			if(file.includes('LeagueClient.log')) resolve(new Array(win, `${location}\\${file}`))
 		})
 	})
 }
 
-function read(filename){
-	console.log("called")
+function read(a){
 	return new Promise((resolve,reject)=>{
-		filename = `C:\\Riot Games\\League of Legends\\Logs\\LeagueClient Logs\\${filename}`
-		fs.readFile(filename,'utf-8', (error,data)=>{
+		fs.readFile(a[1], 'utf-8', (error, data)=>{
 			if(error) reject(error)
-			else {
-				let lines = data.split('\n')
-				console.log(lines[lines.length - 3])
-				console.log(lines[lines.length - 2])
-				console.log(lines[lines.length - 1])
-			}
+			a.push(data)
+			resolve(a)
 		})
 	})
+}
+
+function parse(a){
+	return new Promise((resolve,reject)=>{
+		let data = a[2]
+		let lines = data.split('\n')
+		lines.reverse()
+		console.log(lines)
+		for(let line of lines){
+			if(line.includes('/lol-champ-select/v1/session: {')) {
+				let begin = line.indexOf('/lol-champ-select/v1/session: {') + 30
+				let json = line.substring(begin)
+				console.log(json)
+				json = json.concat('}}')
+				console.log(json)
+				//json = JSON.parse(json)
+				a[0].webContents.send('client', json)
+
+				initial(a[0], a[1])
+				resolve()
+			}
+		}
+	})
+
+
+}
+
+function inform(a){
 }

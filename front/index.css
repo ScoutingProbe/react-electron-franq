@@ -26,11 +26,12 @@ form {
 
 .championCard{
 	width: 1200px;
-	height: 1000px;
+	height: 1200px;
 	border: 1px solid blue;
 }
 
 .championImage{
+	float:left;
 }
 
 .championText{

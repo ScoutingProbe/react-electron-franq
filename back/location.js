@@ -1,7 +1,7 @@
 const fs = require('fs')
 
-module.exports.initial = function initial(location, win){
-	confirm(location, win)
+module.exports.initial = function initial(win, location){
+	confirm(win, location)
 	.then(store)
 	.then(inform)
 	.catch((error)=>{
@@ -9,7 +9,7 @@ module.exports.initial = function initial(location, win){
 	})
 }
 
-function confirm(location, win){
+function confirm(win, location){
 	return new Promise((resolve, reject) => {
 		fs.access(location, (error) => {
 			if (error) {
