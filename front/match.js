@@ -7,6 +7,7 @@ $(document).ready(()=>{
 		ipcRenderer.send('location', $('#location-input').val()) 
 	})
 	ipcRenderer.send('location', $('#location-input').val())
+	ipcRenderer.send('client', $('#location-input').val())
 })
 
 ipcRenderer.on('location', (event, message) => {
@@ -14,12 +15,14 @@ ipcRenderer.on('location', (event, message) => {
 		$('#location-message').html(`<span>${message}</span>&#10003;`) : 
 		$('#location-message').html(`<span>${message}</span>&#10007;`)
 
-	if (message == 'file found')
-		ipcRenderer.send('client', $('#location-input').val())
+	if (message == 'file found'){
+		ipcRenderer.send('client', $('#location-input').val())		
+	}
+
 })
 
 ipcRenderer.on('client', (event, json)=>{
-	$('#client-message').text(JSON.stringify(json))
+	$('#client-json').text(JSON.stringify(json))
 
 	let html = `<div id='myTeam'>`
 
@@ -32,7 +35,11 @@ ipcRenderer.on('client', (event, json)=>{
 	html += `</div>`
 
 
-	$('#lobby').html(html)
+	$('#client').html(html)
+})
+
+ipcRenderer.on('client-message', (event, message)=>{
+	$('#client-message').text(message)
 })
 
 function getName(id){
