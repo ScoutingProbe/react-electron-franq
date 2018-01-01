@@ -1,7 +1,8 @@
 const fs = require('fs')
 const Tail = require('tail').Tail
-
+const Gaze = require('gaze').Gaze
 //npm uninstall tail
+//npm uninstall gaze
 
 // C:\fakepath\2017-05-30T20-51-06_6672_LeagueClient.log
 // C:\Riot Games\League of Legends
@@ -21,16 +22,18 @@ module.exports.initial = function initial(win, location){
 		console.log(`${event} ${file}`) 
 		if(file){
 			if(file.includes('LeagueClient.log')){
-				let clientLog = new Tail(`${location}\\${file}`)
-				clientLog.on('line', data=>{
+				let logFile = new Tail(`${location}\\${file}`)
+				logFile.on('line', data=>{
 					let json = null
 					let message = null
 					if(data.includes('app_start'))
 						message = 'client open'
-					else if(data.includes('lol-matchmaking| Matchmaking: entering state \'Searching\''))
-						message = 'matchmaking search'
-					else if(data.includes('lol-gameflow| Gameflow: entering state \'ChampSelect\''))
-						message = 'gameflow champselect'
+					else if(data.includes('login_succeeded: true'))
+						message = 'login'// this one does not work
+					else if(data.includes('lol-matchmaking| Matchmaking: entering state \'Searching\'')) 
+						message = 'matchmaking search' //this one does not work
+					else if(data.includes('lol-gameflow| Gameflow: entering state \'ChampSelect\'')) 
+						message = 'gameflow champselect' 
 					else if(data.includes('/lol-champ-select/v1/session: {')){
 						message = 'pickban'
 						let begin = data.indexOf('{"actions":[[')
@@ -41,18 +44,17 @@ module.exports.initial = function initial(win, location){
 					}
 					else if(data.includes('lol-gameflow| Gameflow: entering state \'GameStart\''))
 						message = 'gameflow gamestart'
-					else if(data.includes('lol-gameflow| Client is no longer running.'))
-						message = 'gameflow game end'
-					else if(data.includes('app_terminate'))
-						message = 'client close'
+					else if(data.includes('lol-gameflow| Client is no longer running.')) 
+						message = 'gameflow game end' // does not work
+					else if(data.includes('app_terminate')) 
+						message = 'client close' // does not work
 					
-					if(json)
-						win.webContents.send('client', json)
+					win.webContents.send('client', json)
 					if(message)
 						win.webContents.send('client-message', message)
 
 				})
-				clientLog.on('error', error=>{
+				logFile.on('error', error=>{
 					console.log(error)
 				})
 			}

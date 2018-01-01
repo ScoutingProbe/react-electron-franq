@@ -7,7 +7,6 @@ $(document).ready(()=>{
 		ipcRenderer.send('location', $('#location-input').val()) 
 	})
 	ipcRenderer.send('location', $('#location-input').val())
-	ipcRenderer.send('client', $('#location-input').val())
 })
 
 ipcRenderer.on('location', (event, message) => {
