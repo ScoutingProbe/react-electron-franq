@@ -24,33 +24,52 @@ ipcRenderer.on('client', (event, json)=>{
 	$('#client-json').text(JSON.stringify(json))
 
 	let html = `<div id='myTeam'>`
-
 	for(let mate of json['myTeam']){
+		let hoverOrLock = hover(mate)
+
 		html +=`<div id='cell${mate['cellId']}'>
 					<span>${mate['displayName']} ${mate['summonerId']} ${mate['assignedPosition']}</span>
-					<span>${getName(mate['championPickIntent'])} ${mate['championPickIntent']} ${mate['championId']}</span>
+					<span>${hoverOrLock}</span>
 				</div>`
 	}
 	html += `</div>`
 
 
+	html += `<div id='theirTeam'>`
+	for(let enemy of json['theirTeam']){
+		let hoverOrLock = hover(enemy)
+		html += `<div id='cell${enemy['cellId']}'>
+					<span>${hoverOrLock}</span>
+				</div>`
+	}
+
+	html += '</div>'
+
+
 	$('#client').html(html)
 })
+
+function hover(player){
+	let champion = ''
+	let hoverOrLock = ''
+	let hoverId = player['championPickIntent']
+	let hoverName = player['championIntentName']
+	let id = player['championId']
+	let name = player['championName']
+
+	if(hoverId || id === 0) champion = '???'
+	if(hoverId > 0){
+		champion = hoverName
+		hoverOrLock = 'hover'
+	}
+	if(id > 0){
+		champion = name
+		hoverOrLock = 'lock'
+	}
+	return `${champion} ${hoverOrLock}`
+}
 
 ipcRenderer.on('client-message', (event, message)=>{
 	$('#client-message').text(message)
 })
-
-function getName(id){
-	let data = fs.readFileSync('./txt/champions.txt', 'utf-8')
-	data = JSON.parse(data)
-	for(let champion in data['keys']){
-		console.log(champion)
-		console.log(`${champion} ${id} ${champion === id}`)
-		if(champion == id) 
-			return data['keys'][champion]
-		else
-			return id
-	}
-}
 

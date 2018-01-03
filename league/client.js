@@ -28,7 +28,11 @@ module.exports.initial = function initial(win, location){
 function watchLogs(win, location){
 	location = location.replace(/\\/g, '\\\\')
 	fs.watch(location, (event, file)=>{
-		if(file.includes('_LeagueClient.log') && event.includes('rename')){
+		// if(file.includes('_LeagueClient.log') && event.includes('rename')){
+		// 	let filepath = `${location}\\${file}`
+		// 	tailLog(win, filepath)
+		// }
+		if (file.includes('_LeagueClient.log') && event.includes('change')){
 			let filepath = `${location}\\${file}`
 			tailLog(win, filepath)
 		}
@@ -59,7 +63,7 @@ function tailLog(win, filepath){
 			message = 'in lobby' 
 		else if(data.includes('timer_champ-select-lock-in'))
 			message = 'champion lockin'
-		else if(data.includes('SAVE_SUCCESS'))
+		else if(data.includes('SAVE_SUCCESS')){
 			switch(saveCount){
 				case 0:
 					message = 'teams locked'
@@ -77,6 +81,7 @@ function tailLog(win, filepath){
 				default:
 					console.log('something went wrong')
 			}
+		}
 		else if(data.includes('/lol-champ-select/v1/session: {')){
 			message = 'pickban'
 			let begin = data.indexOf('{"actions":[[')
@@ -84,6 +89,7 @@ function tailLog(win, filepath){
 			json = data.substring(begin, end)
 			json = json.concat('}')
 			json = JSON.parse(json)
+			json = insertNames(json)
 		}
 		else if(data.includes('timer phase=BAN_PICK, current phase=FINALIZATION,'))
 			message = 'game start'
@@ -105,4 +111,37 @@ function tailLog(win, filepath){
 	tail.on('error', error=>{
 		console.log(error)
 	})
+}
+
+function insertNames(json){
+	let champions = fs.readFileSync('./txt/champions.txt', 'utf-8')
+	champions = JSON.parse(champions)
+	let keys = champions['keys']
+
+	json['myTeam'] = loopTeam(json['myTeam'], keys)
+	json['theirTeam'] = loopTeam(json['theirTeam'], keys)
+	
+	return json
+}
+
+function loopTeam(team, keys){
+	for(let they of team){
+		let championId = they['championId']
+		if(championId === 0){
+			they['championName'] = '???'
+			continue
+		}
+		
+		they['championName'] = keys[championId]
+	}
+
+	for(let they of team){
+		let championPickIntent = they['championPickIntent']
+		if(championPickIntent === 0){
+			they['championIntentName'] = '???'
+			continue
+		}
+		they['championIntentName'] = keys[championPickIntent]
+	}
+	return team
 }
