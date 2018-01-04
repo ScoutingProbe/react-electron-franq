@@ -23,13 +23,23 @@ ipcRenderer.on('location', (event, message) => {
 ipcRenderer.on('client', (event, json)=>{
 	$('#client-json').text(JSON.stringify(json))
 
-	let html = `<div id='myTeam'>`
+	let html = `<div id='bans'>`
+	for(let ban in json['actions'][0]){
+		html += `<span>${ban['championName']}</span>`
+	}
+	html += '</div>'
+
+
+	html += `<div id='myTeam'>`
 	for(let mate of json['myTeam']){
 		let hoverOrLock = hover(mate)
 
-		html +=`<div id='cell${mate['cellId']}'>
-					<span>${mate['displayName']} ${mate['summonerId']} ${mate['assignedPosition']}</span>
-					<span>${hoverOrLock}</span>
+		html +=`<div id='cell${mate['summonerId']}'>
+					<ul>
+						<li>${mate['displayName']}</li>
+						<li>${mate['assignedPosition']}</li>
+						<li>${hoverOrLock}</li>
+					</ul>
 				</div>`
 	}
 	html += `</div>`
@@ -73,3 +83,10 @@ ipcRenderer.on('client-message', (event, message)=>{
 	$('#client-message').text(message)
 })
 
+ipcRenderer.on('championMastery', (event, mastery, summonerId)=>{
+	if(typeof(mastery) === 'string') $(`#cell${summonerId} ul`).append(`<li>${mastery}</li>`)
+	else{
+		$(`#cell${summonerId} ul`).append(`<li>Champion level: ${mastery['championLevel']}</li>`)
+		$(`#cell${summonerId} ul`).append(`<li>Last played: ${mastery['lastPlayTimeHuman'][0]} ${mastery['lastPlayTimeHuman'][1]}</li>`)
+	}
+})

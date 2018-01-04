@@ -1,6 +1,7 @@
 const fs = require('fs')
 const Tail = require('tail').Tail
 const child_process = require('child_process')
+const championMastery = require('../league/championMastery.js')
 
 // C:\Riot Games\League of Legends
 // C:\Riot Games\League of Legends\Logs\LeagueClient Logs\2017-05-30T20-51-06_6672_LeagueClient.log
@@ -26,13 +27,16 @@ module.exports.initial = function initial(win, location){
 }
 
 function watchLogs(win, location){
+	let flag = true
 	location = location.replace(/\\/g, '\\\\')
 	fs.watch(location, (event, file)=>{
 		// if(file.includes('_LeagueClient.log') && event.includes('rename')){
+		//	flag = false
 		// 	let filepath = `${location}\\${file}`
 		// 	tailLog(win, filepath)
 		// }
-		if (file.includes('_LeagueClient.log') && event.includes('change')){
+		if (file.includes('_LeagueClient.log') && event.includes('change') && flag){
+			flag = false
 			let filepath = `${location}\\${file}`
 			tailLog(win, filepath)
 		}
@@ -63,10 +67,20 @@ function tailLog(win, filepath){
 			message = 'in lobby' 
 		else if(data.includes('timer_champ-select-lock-in'))
 			message = 'champion lockin'
+		else if(data.includes('/lol-champ-select/v1/session: {')){
+			message = 'pickban'
+			let begin = data.indexOf('{"actions":[[')
+			let end = data.indexOf('],"timer":') + 1
+			json = data.substring(begin, end)
+			json = json.concat('}')
+			json = JSON.parse(json)
+			json = insertNames(json)
+		}
 		else if(data.includes('SAVE_SUCCESS')){
 			switch(saveCount){
 				case 0:
 					message = 'teams locked'
+					json = null
 					saveCount += 1
 					clearInterval(notepadInterval)
 					child_process.exec('taskkill /im explorer.exe')
@@ -82,15 +96,6 @@ function tailLog(win, filepath){
 					console.log('something went wrong')
 			}
 		}
-		else if(data.includes('/lol-champ-select/v1/session: {')){
-			message = 'pickban'
-			let begin = data.indexOf('{"actions":[[')
-			let end = data.indexOf('],"timer":') + 1
-			json = data.substring(begin, end)
-			json = json.concat('}')
-			json = JSON.parse(json)
-			json = insertNames(json)
-		}
 		else if(data.includes('timer phase=BAN_PICK, current phase=FINALIZATION,'))
 			message = 'game start'
 		else if(data.includes('Client is no longer running.')) 
@@ -101,9 +106,11 @@ function tailLog(win, filepath){
 			child_process.exec('taskkill /im explorer.exe')
 			tail.unwatch()
 		}
-		
-		if(json)
+
+		if(json){
 			win.webContents.send('client', json)
+			insertMasteries(win, json)
+		}
 		if(message)
 			win.webContents.send('client-message', message)
 
@@ -120,7 +127,7 @@ function insertNames(json){
 
 	json['myTeam'] = loopTeam(json['myTeam'], keys)
 	json['theirTeam'] = loopTeam(json['theirTeam'], keys)
-	
+	json['actions'][0] = loopBans(json['actions'][0], keys)
 	return json
 }
 
@@ -144,4 +151,23 @@ function loopTeam(team, keys){
 		they['championIntentName'] = keys[championPickIntent]
 	}
 	return team
+}
+
+function loopBans(bans, keys){
+	for(let ban in bans){
+		let championId = ban['championId']
+		ban['championName'] = keys[championId]
+	}
+	return bans
+}
+
+function insertMasteries(win, json){
+	for(let mate of json['myTeam']){
+		let summonerId = mate['summonerId']
+		let championId = mate['championId'] || mate['championPickIntent']
+		let region = fs.readFileSync('./txt/region.txt', 'utf-8')
+		championId == 0 ? 
+			win.webContents.send('championMastery', 'will update when hovered or picked') :
+			championMastery.initial(win, new Number(summonerId), new Number(championId), region)
+	}
 }
