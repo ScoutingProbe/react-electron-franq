@@ -20,15 +20,33 @@ ipcRenderer.on('location', (event, message) => {
 
 })
 
-ipcRenderer.on('client', (event, json)=>{
+ipcRenderer.on('client', (event, json, champions)=>{
 	$('#client-json').text(JSON.stringify(json))
 
-	let html = `<div id='bans'>`
-	for(let ban in json['actions'][0]){
-		html += `<span>${ban['championName']}</span>`
+	let html = `<ol id='enemyBans'>`
+	for(let i = 0; i < 5; i++){
+		let ban = json['actions'][0][i]
+		let championId = ban['championId']
+		let championName = champions['keys'][championId]
+		ban['completed'] ?
+			html += `<li class='ban'>Enemy bans ${championName}</li>` :
+			html += `<li class='ban'>banning...</li>`
+		
 	}
-	html += '</div>'
+	html += '</ol>'
 
+	html += `<ol id='teamBans'>`
+	for(let i = 5; i < 10; i++){
+		let ban = json['actions'][0][i]
+		let displayName = json['myTeam'][i % 5]['displayName']
+		let championId = ban['championId']
+		let championName = champions['keys'][championId]
+		ban['completed'] ?
+			html += `<li class='ban'>${displayName} bans ${championName}</li>` :
+			html += `<li class='ban'>${displayName} banning...</li>`
+		
+	}
+	html += '</ol>'
 
 	html += `<div id='myTeam'>`
 	for(let mate of json['myTeam']){
@@ -84,8 +102,15 @@ ipcRenderer.on('client-message', (event, message)=>{
 })
 
 ipcRenderer.on('championMastery', (event, mastery, summonerId)=>{
-	if(typeof(mastery) === 'string') $(`#cell${summonerId} ul`).append(`<li>${mastery}</li>`)
+	
+	if(typeof(mastery) == 'string'){
+		$(`#cell${summonerId} ul`).append(`<li>${mastery}</li>`)
+	}
 	else{
+		let i = $(`#cell${summonerId} ul li`).length
+		for(i; i > 3; i--){
+			$(`#cell${summonerId} ul li:last-child`).remove()
+		}
 		$(`#cell${summonerId} ul`).append(`<li>Champion level: ${mastery['championLevel']}</li>`)
 		$(`#cell${summonerId} ul`).append(`<li>Last played: ${mastery['lastPlayTimeHuman'][0]} ${mastery['lastPlayTimeHuman'][1]}</li>`)
 	}

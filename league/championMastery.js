@@ -40,25 +40,25 @@ function produceMessage(win, data, summonerId){
 		let statusCode = data['status']['status_code']
 		switch(statusCode) {
 			case 400:
-				inform(win, '400 was thrown. Bad Request')
+				inform(win, '400 was thrown. Bad Request', summonerId)
 				break
 			case 403:
-				inform(win, '403 was thrown. Forbidden. old riotgames api key')
+				inform(win, '403 was thrown. Forbidden. old riotgames api key', summonerId)
 				break
 			case 404:
-				inform(win, '404 was thrown. Not found')
+				inform(win, '404 was thrown. Not found', summonerId)
 				break
 			case 415:
-				inform(win, '415 was thrown. Unsupported Media Type')
+				inform(win, '415 was thrown. Unsupported Media Type', summonerId)
 				break
 			case 429:
-				inform(win, '429 was thrown. Rate Limit Exceeded')
+				inform(win, '429 was thrown. Rate Limit Exceeded', summonerId)
 				break
 			case 500:
-				inform(win, '500 was thrown. Internal Server Error')
+				inform(win, '500 was thrown. Internal Server Error', summonerId)
 				break
 			default:
-				inform(win, 'Something went wrong')
+				inform(win, 'Something went wrong', summonerId)
 				break
 		} 
 	}
