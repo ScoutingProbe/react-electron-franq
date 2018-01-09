@@ -1,7 +1,10 @@
 const https = require('https')
 const dry = require('../back/dry.js')
+const fs = require('fs')
 
-module.exports.initial = function(win, summonerId, championId, region){
+module.exports.initial = function(win, mate, region){
+	let championId = mate['championId'] || mate['championPickIntent']
+	let championName = JSON.parse(fs.readFileSync('./txt/champions.txt'))['keys'][championId]
 	//https://na1.api.riotgames.com/lol/champion-mastery/v3/champion-masteries/by-summoner/24481735/by-champion/19
 	const header = {	
 						"Origin": null,
@@ -12,7 +15,7 @@ module.exports.initial = function(win, summonerId, championId, region){
 
 	const options = {
 						"hostname": dry.setRegion(region),
-						"path": `/lol/champion-mastery/v3/champion-masteries/by-summoner/${summonerId}/by-champion/${championId}`,
+						"path": `/lol/champion-mastery/v3/champion-masteries/by-summoner/${mate['summonerId']}/by-champion/${championId}`,
 						"headers": header,
 						"agent": false,
 					}
@@ -23,7 +26,7 @@ module.exports.initial = function(win, summonerId, championId, region){
 		})
 		response.on('end', () => {
 			data = JSON.parse(data)
-			produceMessage(win, data, summonerId)
+			produceMessage(win, data, mate['cellId'], championName)
 		})
 	})
 
@@ -34,44 +37,45 @@ module.exports.initial = function(win, summonerId, championId, region){
 	request.end()
 }
 
-function produceMessage(win, data, summonerId){
-	if(typeof(data['championLevel']) === 'number') humanizeTime(win, data)
+function produceMessage(win, data, cellId, championName){
+	if(typeof(data['championLevel']) === 'number') humanize(win, data, cellId, championName)
 	else {
 		let statusCode = data['status']['status_code']
 		switch(statusCode) {
 			case 400:
-				inform(win, '400 was thrown. Bad Request', summonerId)
+				inform(win, '400 was thrown bad request.', cellId)
 				break
 			case 403:
-				inform(win, '403 was thrown. Forbidden. old riotgames api key', summonerId)
+				inform(win, '403 was thrown forbidden old riotgames api key.', cellId)
 				break
 			case 404:
-				inform(win, '404 was thrown. Not found', summonerId)
+				inform(win, `has 0 experience with ${championName}.`, cellId) //404 was thrown not found.
 				break
 			case 415:
-				inform(win, '415 was thrown. Unsupported Media Type', summonerId)
+				inform(win, '415 was thrown unsupported media type.', cellId)
 				break
 			case 429:
-				inform(win, '429 was thrown. Rate Limit Exceeded', summonerId)
+				inform(win, '429 was thrown rate limit exceeded.', cellId)
 				break
 			case 500:
-				inform(win, '500 was thrown. Internal Server Error', summonerId)
+				inform(win, '500 was thrown internal server error.', cellId)
 				break
 			default:
-				inform(win, 'Something went wrong', summonerId)
+				inform(win, 'Something went wrong.', cellId)
 				break
 		} 
 	}
 }
 
-function humanizeTime(win, mastery){
+function humanize(win, mastery, cellId, championName){
 	epochPlayTime = new Date(mastery['lastPlayTime'])
 	let localDateString =  epochPlayTime.toLocaleDateString()
 	let localTimeString = epochPlayTime.toLocaleTimeString()
 	mastery['lastPlayTimeHuman'] = new Array(localDateString, localTimeString)
-	inform(win, mastery, mastery['playerId'])
+	mastery['championName'] = championName
+	inform(win, mastery, cellId)
 }
 
-function inform(win, mastery, summonerId){
-	win.webContents.send('championMastery', mastery, summonerId)
+function inform(win, mastery, cellId){
+	win.webContents.send('championMastery', mastery, cellId)
 }

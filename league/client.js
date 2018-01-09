@@ -30,16 +30,16 @@ function watchLogs(win, location){
 	let flag = true
 	location = location.replace(/\\/g, '\\\\')
 	fs.watch(location, (event, file)=>{
-		if(file.includes('_LeagueClient.log') && event.includes('rename') && flag){
+		// if(file.includes('_LeagueClient.log') && event.includes('rename') && flag){
+		// 	flag = false
+		// 	let filepath = `${location}\\${file}`
+		// 	tailLog(win, location, filepath)
+		// }
+		if (file.includes('_LeagueClient.log') && event.includes('change') && flag){
 			flag = false
 			let filepath = `${location}\\${file}`
 			tailLog(win, location, filepath)
 		}
-		// if (file.includes('_LeagueClient.log') && event.includes('change') && flag){
-		// 	flag = false
-		// 	let filepath = `${location}\\${file}`
-		// 	tailLog(win, filepath)
-		// }
 	})
 }
 
@@ -56,7 +56,7 @@ function tailLog(win, location, filepath){
 		else if(data.includes('timer_login-rendered')){
 			message = 'login rendered'
 			notepadInterval = setInterval(()=>{
-				let powershell = child_process.spawn('powershell.exe', ['-file', '.\\league\\notepadInterval.ps1', filepath])
+				child_process.spawn('powershell.exe', ['-file', '.\\league\\notepadInterval.ps1', filepath])
 			}, 3000)
 		}
 		else if(data.includes('type: RECEIVE_SUCCESS'))
@@ -69,7 +69,7 @@ function tailLog(win, location, filepath){
 			message = 'game accept'
 		else if(data.includes('READY_CHECK_HIDE')) 
 			message = 'in lobby'
-		else if(data.includes()) //need this one
+		else if(data.includes('lol-gameflow| GAMEFLOW_EVENT.STRANGER_DODGED')) //need this one
 			message = 'dodge... matchmaking search'
 		else if(data.includes('timer_champ-select-select-champion'))
 			message = 'hover on champion'
@@ -85,20 +85,12 @@ function tailLog(win, location, filepath){
 			let array = insertNames(json)
 			json = array[0]
 			champions = array[1]
-
-			if(json['actions'][7][0]['completed']){
-				message = 'game start'
-				json = null
-				champions = null
-				clearInterval(notepadInterval)
-				child_process.exec('taskkill /im explorer.exe')
-			}
+			lolcounter = array[2]
 		}
-		else if(data.includes('Client is no longer running.')) 
+		else if(data.includes('Client is no longer running.'))  //need this one
 			message = 'game end'
 		else if(data.includes('app_terminate')){
 			message = 'client close'
-			json = null
 			clearInterval(notepadInterval)
 			child_process.exec('taskkill /im explorer.exe')
 			tail.unwatch()
@@ -106,6 +98,12 @@ function tailLog(win, location, filepath){
 		}
 
 		if(json && champions){
+			if(json['actions'][7][0]['completed']){
+				message = 'game start'
+				clearInterval(notepadInterval)
+				child_process.exec('taskkill /im explorer.exe')
+			}
+			
 			win.webContents.send('client', json, champions)
 			insertMasteries(win, json)
 		}
@@ -120,13 +118,15 @@ function tailLog(win, location, filepath){
 
 function insertNames(json){
 	let champions = fs.readFileSync('./txt/champions.txt', 'utf-8')
+	let lolcounter = fs.readFileSync('./txt/lolcounter.txt', 'utf-8')
 	champions = JSON.parse(champions)
+	lolcounter = JSON.parse(lolcounter)
 	let keys = champions['keys']
 
 	json['myTeam'] = loopTeam(json['myTeam'], keys)
 	json['theirTeam'] = loopTeam(json['theirTeam'], keys)
 	json['actions'][0] = loopBans(json['actions'][0], keys)
-	return new Array(json, champions)
+	return new Array(json, champions, lolcounter)
 }
 
 function loopTeam(team, keys){
@@ -161,11 +161,11 @@ function loopBans(bans, keys){
 
 function insertMasteries(win, json){
 	for(let mate of json['myTeam']){
-		let summonerId = mate['summonerId']
+		let cellId = mate['cellId']
 		let championId = mate['championId'] || mate['championPickIntent']
 		let region = fs.readFileSync('./txt/region.txt', 'utf-8')
 		championId == 0 ? 
-			win.webContents.send('championMastery', 'picking...', summonerId) :
-			championMastery.initial(win, new Number(summonerId), new Number(championId), region)
+			win.webContents.send('championMastery', 'picking...', cellId) :
+			championMastery.initial(win, mate, region)
 	}
 }
