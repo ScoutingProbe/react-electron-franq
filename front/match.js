@@ -19,47 +19,103 @@ ipcRenderer.on('location', (event, message) => {
 	}
 
 })
+ipcRenderer.on('client', (event, client, champions, lolcounter)=>{
+	$('#client-json').text(JSON.stringify(client))
 
-ipcRenderer.on('client', (event, json, champions, lolcounter)=>{
-	$('#client-json').text(JSON.stringify(json))
+	console.log(client)
+	
+	let localPlayer = client['myTeam'].concat(client['theirTeam']).filter(player=>{
+		if(player['cellId'] == client['localPlayerCellId'])
+			return player
+	})[0]
 
-	let html = `<div id='bans'>
+
+	let bestPlayer = client['myTeam'].reduce((best, player, index, team)=>{
+		if(!Object.getOwnPropertyNames(player).includes('championPoints'))
+			return best
+		if(best['championPoints'] < player['championPoints']) 
+			return player
+		if(index == team.length - 1)
+			return best
+	}, {'championPoints': 0})
+	if(bestPlayer['championPoints'] === 0) bestPlayer = localPlayer
+
+	let html = `<div id='bans'>         
 					<h3>Enemy bans</h3>
 					<div id='enemyBans'>`
-	html += loopBan(json['actions'][0].slice(5), json, champions, lolcounter)
-	html += `</div>
-			<h3>Team bans</h3>
-			<div id='teamBans'>`
-	html += loopBan(json['actions'][0].slice(5, 10), json, champions, lolcounter)
-	html += `</div>
-		</div> 
-		<div id='teams'>
-			<h3>My team</h3>
-			<div id='myTeam'>`
-	for(let mate of json['myTeam']){
-		let hoverOrLock = hover(mate)
-
-		html +=`<div id='cell${mate['cellId']}'>
-					<p class='mateParagraph name'>${mate['displayName']} </p>
-					<p class='mateParagraph position'>${mate['assignedPosition']} </p>
-					<p class='mateParagraph champion'>${hoverOrLock} </p>
+						html += loopBan(client['actions'][0].slice(5), client, champions, lolcounter)
+			html += `</div>
+					<h3>Team bans</h3>
+					<div id='teamBans'>`
+						html += loopBan(client['actions'][0].slice(5, 10), client, champions, lolcounter)
+			html += `</div>
+				</div> 
+				<div id='teams'>
+					<h3>My team</h3>
+					<div id='myTeam'>`
+						html += loopMyTeam(client['myTeam'], client, champions, lolcounter, bestPlayer, localPlayer)
+			html += `<h3>Their team</h3>
+					<div id='theirTeam'>`
+						html += loopTheirTeam(client['theirTeam'], client, champions, lolcounter, bestPlayer, localPlayer)
+			html += `</div>
 				</div>`
-	}
-
-	html += `<h3>Their team</h3>
-			<div id='theirTeam'>`
-	for(let enemy of json['theirTeam']){
-		let hoverOrLock = hover(enemy)
-		html += `<div id='cell${enemy['cellId']}'>
-					<p>${hoverOrLock}</p>
-				</div>`
-	}
-	html += `</div></div>
-		</div>`
 
 
 	$('#client').html(html)
 })
+
+function loopMyTeam(team, client, champions, lolcounter, best, local){
+	let html = ''
+	for(let mate of team){
+		console.log(mate)
+		html += `<div class='cell' id='cell${mate['cellId']}>	
+					<p class='lane'>${mate['assignedPosition']} has played x number of games in role.</p>
+					<p class='summoner'>${mate['displayName']} is a ${mate['mastery']['championLevel']} ${mate['championName']}
+						player, last played ${mate['mastery']['lastPlayTimeHuman'][0]} at ${mate['mastery']['lastPlayTimeHuman'][1]}</p>
+					<p class='champion'>${hover(mate)}: ${recommend(mate, client, lolcounter, best, local)}</p>
+				</div>`
+
+	}
+	return html
+}
+
+function loopTheirTeam(team, client, champions, lolcounter, bestPlayer){
+	let html = ''
+	return html
+}
+
+function recommend(mate, client, lolcounter, best, local){
+	let championId = mate['championId'] || mate['championPickIntent']
+	let lane = local['assignedPosition']
+	let buddy = ''
+	switch(lane){
+		case 'BOTTOM':
+		case 'UTILITY':
+			lane = 'bottom'
+			buddy = 'UTILITY'
+			break
+		case 'MIDDLE':
+			lane = 'mid'
+			buddy = 'JUNGLE'
+			break
+		case 'TOP':
+			lane = 'top'
+			buddy = 'JUNGLE'
+			break
+		case 'JUNGLE':
+			lane = 'jungle'
+			buddy = ''
+			break
+		default:
+			console.log(`match.js #recommend error ${lane}`)
+	}
+
+	let html = `<span class='recommend'>
+					${lane}
+				</span>`
+	return html
+
+}
 
 function loopBan(bans, client, champions, lolcounter){
 	let html = ''
@@ -121,19 +177,6 @@ function hover(player){
 ipcRenderer.on('client-message', (event, message)=>{
 	$('#client-message').text(message)
 })
-
-ipcRenderer.on('championMastery', (event, mastery, cellId)=>{
-	if(typeof(mastery) == 'string'){
-		$(`#cell${cellId} p.name`).append(`<span> ${mastery} </span>`)
-	}
-	else{
-		let championName = mastery['championName']
-		let name = `<span>is a level ${mastery['championLevel']} ${championName} player with last game on 
-					${mastery['lastPlayTimeHuman'][0]} at ${mastery['lastPlayTimeHuman'][1]}. </span>`
-		$(`#cell${cellId} p.name`).append(name)
-	}
-})
-
 
 
 // $('#cell{0-9} p.{name, position, champion}')

@@ -15,6 +15,7 @@ module.exports.initial = function(win){
 		console.log(error)
 	})
 }
+// {weak, strong, even, good} {general, top, mid, jungle, bottom}
 //http://lolcounter.com/champions/aatrox/weak/general
 //http://lolcounter.com/champions/aatrox/weak/top
 //http://lolcounter.com/champions/aatrox/weak/mid

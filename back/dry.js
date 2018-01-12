@@ -1,6 +1,6 @@
 const fs = require('fs')
 
-module.exports.RIOT_DEVELOPER_KEY = 'RGAPI-57126764-69f8-4e9f-9281-ae0259ac738f'
+module.exports.RIOT_DEVELOPER_KEY = 'RGAPI-2a979d1d-1f3c-436c-b52d-87aa10aab6d6'
 
 module.exports.setRegion = function(region) {
 	switch (region) {
