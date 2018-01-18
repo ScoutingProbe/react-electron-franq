@@ -19,49 +19,47 @@ ipcRenderer.on('location', (event, message) => {
 	}
 
 })
-ipcRenderer.on('client', (event, client, champions, lolcounter)=>{
+ipcRenderer.on('client', (event, client)=>{
 	$('#client-json').text(JSON.stringify(client))
-
-	console.log(client)
 	
-	let localPlayer = client['myTeam'].concat(client['theirTeam']).filter(player=>{
-		if(player['cellId'] == client['localPlayerCellId'])
-			return player
-	})[0]
+	// let localPlayer = client['myTeam'].concat(client['theirTeam']).filter(player=>{
+	// 	if(player['cellId'] == client['localPlayerCellId'])
+	// 		return player
+	// })[0]
 
 
-	let bestPlayer = client['myTeam'].reduce((best, player, index, team)=>{
-		if(!Object.getOwnPropertyNames(player).includes('championPoints'))
-			return best
-		if(best['championPoints'] < player['championPoints']) 
-			return player
-		if(index == team.length - 1)
-			return best
-	}, {'championPoints': 0})
-	if(bestPlayer['championPoints'] === 0) bestPlayer = localPlayer
+	// let bestPlayer = client['myTeam'].reduce((best, player, index, team)=>{
+	// 	if(!Object.getOwnPropertyNames(player).includes('championPoints'))
+	// 		return best
+	// 	if(best['championPoints'] < player['championPoints']) 
+	// 		return player
+	// 	if(index == team.length - 1)
+	// 		return best
+	// }, {'championPoints': 0})
+	// if(bestPlayer['championPoints'] === 0) bestPlayer = localPlayer
 
-	let html = `<div id='bans'>         
-					<h3>Enemy bans</h3>
-					<div id='enemyBans'>`
-						html += loopBan(client['actions'][0].slice(5), client, champions, lolcounter)
-			html += `</div>
-					<h3>Team bans</h3>
-					<div id='teamBans'>`
-						html += loopBan(client['actions'][0].slice(5, 10), client, champions, lolcounter)
-			html += `</div>
-				</div> 
-				<div id='teams'>
-					<h3>My team</h3>
-					<div id='myTeam'>`
-						html += loopMyTeam(client['myTeam'], client, champions, lolcounter, bestPlayer, localPlayer)
-			html += `<h3>Their team</h3>
-					<div id='theirTeam'>`
-						html += loopTheirTeam(client['theirTeam'], client, champions, lolcounter, bestPlayer, localPlayer)
-			html += `</div>
-				</div>`
+	// let html = `<div id='bans'>         
+	// 				<h3>Enemy bans</h3>
+	// 				<div id='enemyBans'>`
+	// 					html += loopBan(client['actions'][0].slice(5), client, champions, lolcounter)
+	// 		html += `</div>
+	// 				<h3>Team bans</h3>
+	// 				<div id='teamBans'>`
+	// 					html += loopBan(client['actions'][0].slice(5, 10), client, champions, lolcounter)
+	// 		html += `</div>
+	// 			</div> 
+	// 			<div id='teams'>
+	// 				<h3>My team</h3>
+	// 				<div id='myTeam'>`
+	// 					html += loopMyTeam(client['myTeam'], client, champions, lolcounter, bestPlayer, localPlayer)
+	// 		html += `<h3>Their team</h3>
+	// 				<div id='theirTeam'>`
+	// 					html += loopTheirTeam(client['theirTeam'], client, champions, lolcounter, bestPlayer, localPlayer)
+	// 		html += `</div>
+	// 			</div>`
 
 
-	$('#client').html(html)
+	// $('#client').html(html)
 })
 
 function loopMyTeam(team, client, champions, lolcounter, best, local){

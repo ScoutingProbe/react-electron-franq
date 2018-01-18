@@ -25,15 +25,13 @@ const championMastery = require('../league/championMastery.js')
 module.exports.initial = function initial(a){ //a = new Array(win, location, interval)
 	watchLogs(a)
 	.then(tailLog)
-	.then(produceClient)
 	.catch(error=>{
 		console.log(error)
 	})
-
-	// .then(fattenBans)
-	// .then(fattenTheirTeam)
 	// .then(requestMyTeamMasteries)
 	// .then(fattenMyTeam)
+	// .then(fattenTheirTeam)
+	// .then(fattenBans)
 	// .then(sendClient)
 }
 
@@ -42,15 +40,15 @@ function watchLogs(a){
 		let location = a[1].replace(/\\/g, '\\\\')
 		fs.watch(location, (event, file)=>{
 			if(event.includes('error')) reject(error)
-			if(file.includes('_LeagueClient.log') && event.includes('rename')){
+			// if(file.includes('_LeagueClient.log') && event.includes('rename')){
+			// 	a.push(`${location}\\\\${file}`)
+			// 	resolve(a)
+			// }		
+
+			if(file.includes('_LeagueClient.log') && event.includes('change')){
 				a.push(`${location}\\\\${file}`)
 				resolve(a)
-			}		
-
-			// if(file.includes('_LeagueClient.log') && event.includes('change')){
-			// 	let filepath = `${location}\\${file}`
-			// 	resolve(new Array(win, location, notepadInterval, filepath))
-			// }
+			}
 		})	
 	})
 }
@@ -59,58 +57,58 @@ function tailLog(a){ // a = new Array(win, location, interval, filepath)
 	return new Promise((resolve,reject)=>{
 		let tail = new Tail(a[3])
 		a.pop()
-		tail.on('line', line=>{
+		tail.on('line', data=>{
 			let message = null
-			let json = null
+			let lolChampSelect = null
 
-			if(line.includes('app_start'))
+			if(data.includes('app_start'))
 				message = 'client open'
-			else if(line.includes('timer_login-rendered'))
+			else if(data.includes('timer_login-rendered'))
 				message = 'login rendered'
-			else if(line.includes('type: RECEIVE_SUCCESS'))
+			else if(data.includes('type: RECEIVE_SUCCESS'))
 				message = 'login'
-			else if(line.includes('timer_parties-enter-queue')) 
+			else if(data.includes('timer_parties-enter-queue')) 
 				message = 'matchmaking search'
-			else if(line.includes('READY_CHECK_USER_DECLINED'))
+			else if(data.includes('READY_CHECK_USER_DECLINED'))
 				message = 'game decline'
-			else if(line.includes('READY_CHECK_USER_ACCEPTED'))
+			else if(data.includes('READY_CHECK_USER_ACCEPTED'))
 				message = 'game accept'
-			else if(line.includes('READY_CHECK_HIDE')) 
+			else if(data.includes('READY_CHECK_HIDE')) 
 				message = 'in lobby'
-			else if(line.includes('GAMEFLOW_EVENT.STRANGER_DODGED')) //need this one
+			else if(data.includes('GAMEFLOW_EVENT.STRANGER_DODGED')) //need this one
 				message = 'dodge...matchmaking search'
-			else if(line.includes('timer_champ-select-select-champion'))
+			else if(data.includes('timer_champ-select-select-champion'))
 				message = 'hover on champion'
-			else if(line.includes('timer_champ-select-lock-in'))
+			else if(data.includes('timer_champ-select-lock-in'))
 				message = 'champion or ban lockin'
-			else if(line.includes('/lol-champ-select/v1/session: {'))
+			else if(data.includes('/lol-champ-select/v1/session: {'))
 				message = 'client update'
-			else if(line.includes('SAVE_SUCCESS'))
+			else if(data.includes('SAVE_SUCCESS'))
 				message = 'game start'
-			else if(line.includes('Client is no longer running.'))  //need this one
+			else if(data.includes('Client is no longer running.'))  //need this one
 				message = 'game end'
-			else if(line.includes('app_terminate'))
+			else if(data.includes('app_terminate'))
 				message = 'client close'
-			else if(line.includes('/lol-champ-select/v1/session: {')){
-				let begin = line.indexOf('{"actions":[[')
-				let end = line.indexOf('],"timer":') + 1
-				json = line.substring(begin, end)
-				json = json.concat('}')	
+			else if(data.includes('/lol-champ-select/v1/session: {')){
+				let begin = data.indexOf('{"actions":[[')
+				let end = data.indexOf('],"timer":') + 1
+				lolChampSelect = data.substring(begin, end)
+				lolChampSelect = lolChampSelect.concat('}')	
 			}
 
-			if(json){
+			if(lolChampSelect){
 				try{ 
-					json = JSON.parse(json)
-
+					lolChampSelect = JSON.parse(lolChampSelect)
 				} catch(exception){
 					message += '...json failed to parse'
-					json = null
+					lolChampSelect = null
 				}
 			}
 
 			if(message)
 				a[0].webContents.send('client-message', message)
 
+			console.log(message)
 			switch(message){
 				case 'login rendered':
 					a[2] = setInterval(()=>{
@@ -118,7 +116,6 @@ function tailLog(a){ // a = new Array(win, location, interval, filepath)
 											['-file', '.\\league\\notepadInterval.ps1', a[3]])
 					}, 3000)
 					break
-				case 'app_terminate':
 				case 'game start':
 					clearInterval(a[2])
 					child_process.exec('taskkill /im explorer.exe')
@@ -130,8 +127,40 @@ function tailLog(a){ // a = new Array(win, location, interval, filepath)
 					tail.unwatch()
 					reject('client close by user')
 					break
+				default:
 			}
 
+			// a = new Array(win, location, interval)
+			if(lolChampSelect){
+				let promises = []
+				lolChampSelect['myTeam'].map((mate, index)=>{
+					let summonerId = mate['summonerId']
+					let championId = mate['championId'] || mate['championPickIntent']
+					if(championId){
+						let championName = dry.getKey(championId)
+						promises.push(championMastery
+							.initial(region, summonerId, championId, championName, index))	
+					}
+					else
+						promises.push('')
+				})
+
+				Promise.all(promises)
+				.then(masteries=>{
+					masteries.map(mastery=>{
+						let myTeamIndex = mastery['index']
+						if(typeof(mastery['status']) === 'string')
+							lolChampSelect = Object.assign(lolChampSelect['myTeam'][myTeamIndex]['mastery'], mastery['status'])	
+						else 
+							lolChampSelect = Object.assign(lolChampSelect['myTeam'][myTeamIndex]['mastery'], mastery) 
+					})
+					a[0].webContents.send('client', lolChampSelect)
+					console.log(lolChampSelect)
+				})
+
+				
+			}
+				
 		})
 		tail.on('error', error=>{
 			reject(error)
@@ -139,34 +168,28 @@ function tailLog(a){ // a = new Array(win, location, interval, filepath)
 	})
 }
 
-function produceClient(a){
-	return new Promise((resolve,reject)=>{
-		console.log(a)
-	})
-}
+// function fattenBans(a){ 
+// 	return new Promise((resolve,reject)=>{
+// 		fs.readFile('./txt/lolcounter.txt', 'utf-8', (error, lolcounter)=>{
+// 			let client = a[5]
+// 			let lane = client['myTeam'].reduce((l, player) =>{
+// 				if(player['cellId'] === client['localPlayerCellId'])
+// 					l += player['assignedPosition']
+// 			}, '')
+// 			let championId = client['myTeam'].reduce((c, player)=>{
+// 				if(player['cellId'] === client['localPlayerCellId'])
+// 					l = player['championId'] || player['championPickIntent']
+// 			}, 0)
 
-function fattenBans(a){
-	return new Promise((resolve,reject)=>{
-		fs.readFile('./txt/lolcounter.txt', 'utf-8', (error, lolcounter)=>{
-			let client = a[5]
-			let lane = client['myTeam'].reduce((l, player) =>{
-				if(player['cellId'] === client['localPlayerCellId'])
-					l += player['assignedPosition']
-			}, '')
-			let championId = client['myTeam'].reduce((c, player)=>{
-				if(player['cellId'] === client['localPlayerCellId'])
-					l = player['championId'] || player['championPickIntent']
-			}, 0)
+// 			console.log(`${lane} ${championId}`)
 
-			console.log(`${lane} ${championId}`)
-
-			// client['actions'][0].map(player=>{
-			// 	let recommend = lolcounter
-			// 	player['recommend'] =
-			// })
-		})
-	})
-}
+// 			// client['actions'][0].map(player=>{
+// 			// 	let recommend = lolcounter
+// 			// 	player['recommend'] =
+// 			// })
+// 		})
+// 	})
+// }
 
 // function myTeam(a){
 // 	return new Promise((resolve,reject)=>{
