@@ -2,7 +2,19 @@ const https = require('https')
 const dry = require('../back/dry.js')
 const fs = require('fs')
 
-module.exports.initial = function(summonerId, championId, championName, region){
+module.exports.initial = function(a){
+	return new Promise((resolve,reject)=>{
+		let win = a[0]
+		let client = a[1]
+
+		let combinations = []
+		client['myTeam'].map(player=>{
+			requestChampionMasteries()
+		})
+	})
+} 
+
+function requestChampionMasteries(summonerId, championId, championName, region){
 	return new Promise((resolve,reject)=>{
 		//https://na1.api.riotgames.com/lol/champion-mastery/v3/champion-masteries/by-summoner/24481735/by-champion/19
 		const options = {
