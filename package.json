@@ -10,6 +10,8 @@
   "author": "andrewsrahn@gmail.com",
   "license": "MIT",
   "devDependencies": {
+    "alt": "^0.18.6",
+    "aviator": "^0.6.6",
     "cheerio": "^1.0.0-rc.2",
     "electron": "^1.6.11",
     "electron-prebuilt-compile": "^1.8.2-beta.3",
