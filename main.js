@@ -28,11 +28,7 @@ let win
 
 function createWindow() {
 	win = new BrowserWindow({width: 1000, height: 850})
-	win.loadURL(url.format({
-		pathname: path.join(__dirname, '/front/match.html'),
-		protocol: 'file:',
-		slashes: true
-	}))
+	win.loadURL('http://localhost:3000')
 
 	win.on('closed', () => {
 		win = null
