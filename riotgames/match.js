@@ -1,4 +1,4 @@
-const dry = require('../back/dry.js')
+const dry = require('../util/dry.js')
 const https = require('https')
 const fs = require('fs')
 

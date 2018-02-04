@@ -1,5 +1,5 @@
 const https = require('https')
-const dry = require('../back/dry.js')
+const dry = require('../util/dry.js')
 const fs = require('fs')
 
 module.exports.initial = function(region, summonerId, championId, championName, index){

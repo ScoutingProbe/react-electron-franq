@@ -1,24 +1,31 @@
 {
-  "name": "pickban",
-  "version": "1.0.0",
-  "description": "Pick Ban is a desktop application that utilizes Riot Games developer portal, game logs, championselect.net, and op.gg to provide a tool that aids in the draft phase of ranked League of Legends games.  ",
-  "repository": "https://github.com/andrewSRahn/pickban",
-  "main": "main.js",
-  "scripts": {
-    "test": "mocha"
-  },
-  "author": "andrewsrahn@gmail.com",
-  "license": "MIT",
-  "devDependencies": {
+  "name": "lolpick",
+  "version": "0.0.1",
+  "description": "lolpick is an Electron based node.js application with react.  It's op.",
+  "repository": "https://github.com/andrewSRahn/lolpick",
+  "private": true,
+  "dependencies": {
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-scripts": "1.1.0",
     "alt": "^0.18.6",
     "aviator": "^0.6.6",
-    "cheerio": "^1.0.0-rc.2",
     "electron": "^1.6.11",
     "electron-prebuilt-compile": "^1.8.2-beta.3",
     "jquery": "^3.2.1",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
     "tail": "^1.2.3"
   },
-  "dependencies": {}
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "electron": "electron .",
+    "dev" : "nf start"
+  },
+  "main": "main.js",
+  "homepage": "./",
+  "devDependencies": {
+    "foreman": "^2.0.0"
+  }
 }

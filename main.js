@@ -3,14 +3,10 @@ const path = require('path')
 const url = require('url')
 const fs = require('fs')
 
-
-const location = require('./back/location.js')
-const summonery = require('./back/summonery.js')
+const location = require('./util/location.js')
+const summonery = require('./util/summonery.js')
 
 const client = require('./league/client.js')
-
-const lolcounter = require('./lolcounter/lolcounter.js')
-const lolcounterRetry = require('./lolcounter/lolcounterRetry.js')
 
 const championMastery = require('./riotgames/championMastery.js')
 const champions = require('./riotgames/champions.js')
@@ -28,7 +24,13 @@ let win
 
 function createWindow() {
 	win = new BrowserWindow({width: 1000, height: 850})
-	win.loadURL('http://localhost:3000')
+	
+	const startUrl = process.env.ELECTRON_START_URL || url.format({
+		pathname: path.join(__dirname, '/../build/index.html'),
+		protocol: 'file:',
+		slashes: true
+	})
+	win.loadURL(startUrl)
 
 	win.on('closed', () => {
 		win = null
@@ -81,9 +83,6 @@ ipcMain.on('riotgames', (event, region, s)=>{
 // lolcounter form
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
-ipcMain.on('lolcounter', event=>{
-	lolcounter.initial(win)
-})
 
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
@@ -95,9 +94,7 @@ ipcMain.on('summonery', (event, sortKey, lane, count)=>{
 	summonery.initial(win, sortKey, lane, count)
 })
 
-ipcMain.on('lolcounter-retry', (event, id, relation, lane, slice)=>{
-	lolcounterRetry.initial(win, id, relation, lane, slice)
-})
+
 
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////

@@ -1,3 +1,0 @@
-About:  Picks and bans is tedious because I access two webpages every game.  I use http://lolcounter.com to find champion counters. I use http://op.gg to check enemy and team profiles. It would be easier if there was one page I could go to for each League game.  Lolpick blends the webpages together into one desktop application.  I like winning, you probably like winning too.  Let's get some lp.  glhf
-
-Release:  I intend to release this by June of 2018. Check out my webpage at http://andrewsrahn.com if you want to get in touch with me; My contact information is in the footer.  I will put up a website at http://lolpick.gg soon...
