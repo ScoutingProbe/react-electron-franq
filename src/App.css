@@ -1,28 +1,45 @@
-.App {
-  text-align: center;
+/*
+League of Legends client window size
+1920 x 1080
+1600 x 900
+1280 x 720
+1024 x 576
+
+*/
+
+#controls{
+  float:right;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
+.control{
+  width:40px;
+  height:40px;
 }
 
-.App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
-  color: white;
+#display-bans{
+
 }
 
-.App-title {
-  font-size: 1.5em;
+.column#dynamic-display{
+  width:50%;
 }
 
-.App-intro {
-  font-size: large;
+.column{
+  float:left;
 }
 
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.mate{
+  width:25%;
 }
+
+.opponent{
+  width:25%;
+  height:;
+}
+
+
+
+#my-team-versus-his-team{
+
+}
+
