@@ -7,8 +7,35 @@ League of Legends client window size
 
 */
 
-#controls{
-  float:right;
+/*root element*/
+#app{
+  height:720px;
+  width:1280px;
+  border:1px solid black;
+  display:flex;
+  justify-content:flex-end;
+}
+
+#left{
+  flex: 1;
+}
+
+#center{
+  flex: 2;
+}
+
+#right{
+  flex: 1;
+}
+
+.component{
+  border: 1px solid black;
+}
+
+
+
+/*rest */
+.controls{
 }
 
 .control{
@@ -17,29 +44,15 @@ League of Legends client window size
 }
 
 #display-bans{
-
 }
 
-.column#dynamic-display{
-  width:50%;
-}
-
-.column{
-  float:left;
+#dynamic-display{
 }
 
 .mate{
-  width:25%;
+
 }
 
 .opponent{
-  width:25%;
-  height:;
-}
-
-
-
-#my-team-versus-his-team{
 
 }
-
