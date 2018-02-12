@@ -16,12 +16,13 @@
     "tail": "^1.2.3"
   },
   "scripts": {
-    "start": "react-scripts start --BROWSER=none",
+    "start": "nf start -p 3000",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "electron": "electron .",
-    "dev": "nf start"
+    "electron-start": "node src/electron-wait-react",
+    "react-start": "react-scripts start --BROWSER=none"
   },
   "main": "main.js",
   "homepage": "./",

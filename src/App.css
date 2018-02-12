@@ -13,7 +13,6 @@ League of Legends client window size
   width:1280px;
   border:1px solid black;
   display:flex;
-  justify-content:flex-end;
 }
 
 #left{
@@ -21,21 +20,23 @@ League of Legends client window size
 }
 
 #center{
-  flex: 2;
+  flex: 1;
 }
 
 #right{
-  flex: 1;
+  flex: 2;
+}
+
+.controls{
+  display:flex;
+  flex-flow: row-reverse wrap;
+  justify-content:flex-end;
+  padding:40px;
+  height:40px;
 }
 
 .component{
   border: 1px solid black;
-}
-
-
-
-/*rest */
-.controls{
 }
 
 .control{
@@ -43,16 +44,16 @@ League of Legends client window size
   height:40px;
 }
 
-#display-bans{
-}
-
 #dynamic-display{
+  padding:0px;
+  margin:0px;
+  border: 1px solid black;
 }
 
 .mate{
-
+  border: 1px solid black;
 }
 
 .opponent{
-
+  border: 1px solid black;
 }

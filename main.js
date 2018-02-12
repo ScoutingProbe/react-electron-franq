@@ -23,13 +23,14 @@ const summoner = require('./riotgames/summoner.js')
 let win
 
 function createWindow() {
-	win = new BrowserWindow({width: 1000, height: 850})
+	win = new BrowserWindow({width: 1280, height: 850, frame:false})
 	
 	const startUrl = process.env.ELECTRON_START_URL || url.format({
 		pathname: path.join(__dirname, '/../build/index.html'),
 		protocol: 'file:',
 		slashes: true
 	})
+	
 	win.loadURL(startUrl)
 
 	win.on('closed', () => {
@@ -53,6 +54,26 @@ app.on('ready', () => {
 	globalShortcut.register('F5', () => {
 		console.log('f5 pressed')
 	})
+})
+
+ipcMain.on('close', () =>{
+	app.quit()
+})
+
+ipcMain.on('minimize', ()=>{
+	win.minimize()
+})
+
+ipcMain.on('settings', ()=>{
+	//send to settings router
+})
+
+ipcMain.on('watch-league', ()=>{
+	// start client up
+})
+
+ipcMain.on('unwatch-league', ()=>{
+	// end client
 })
 
 //////////////////////////////////////////////////////////////////////////////////
