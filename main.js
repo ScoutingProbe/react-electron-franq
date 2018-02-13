@@ -2,6 +2,7 @@ const {app, BrowserWindow, globalShortcut, ipcMain} = require('electron')
 const path = require('path')
 const url = require('url')
 const fs = require('fs')
+const child_process = require('child_process')
 
 const location = require('./util/location.js')
 const summonery = require('./util/summonery.js')
@@ -45,7 +46,9 @@ app.on('activate', () => {
 })
 
 app.on('window-all-closed', () => {
-	app.quit()
+	child_process.exec('taskkill /f /im node.exe', () => {
+		app.quit()
+	})
 })
 
 app.on('ready', createWindow)
@@ -57,7 +60,9 @@ app.on('ready', () => {
 })
 
 ipcMain.on('close', () =>{
-	app.quit()
+	child_process.exec('taskkill /f /im node.exe', () => {
+		app.quit()
+	})
 })
 
 ipcMain.on('minimize', ()=>{
