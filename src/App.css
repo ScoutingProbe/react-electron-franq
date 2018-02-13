@@ -13,26 +13,32 @@ League of Legends client window size
   width:1280px;
   border:1px solid black;
   display:flex;
+  flex-flow: row wrap;
 }
 
-#left{
-  flex: 1;
-}
-
-#center{
-  flex: 1;
-}
-
-#right{
-  flex: 2;
-}
-
-.controls{
+#controls{
+  flex:100%;
   display:flex;
   flex-flow: row-reverse wrap;
   justify-content:flex-end;
-  padding:40px;
+  border:1px solid yellow;
   height:40px;
+}
+
+#left{
+  display:flex;
+  flex-flow: column;
+  flex:15%;
+}
+
+#center{
+  display:flex;
+  flex-flow: column;
+  flex:15%;
+}
+
+#right{
+  flex:50%;
 }
 
 .component{

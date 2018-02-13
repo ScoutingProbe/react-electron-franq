@@ -4,7 +4,7 @@ import settings from './settings.png'
 import minimize from './minimize.png'
 import close from './close.png'
 import watchLeague from './league.png'
-import cancel from './cancel.png'
+import unwatchLeague from './cancel.png'
 
 // christian sepulveda hack
 const electron = window.require('electron');
@@ -12,18 +12,19 @@ const fs = electron.remote.require('fs');
 const ipcRenderer  = electron.ipcRenderer;
 // end hack
 
+window.require('electron-react-devtools').install()
+
 class App extends Component {
 	render() {
 		return (
 			<div id='app'>
+				<div id='controls'>
+					<ControlLeague/>
+					<Control image={settings} clicker={onClickSettings}/>
+					<Control image={minimize} clicker={onClickMinimize}/>
+					<Control image={close} clicker={onClickClose}/>
+				</div>
 				<div id='left'>
-					<div class='controls'>
-						<Control image={cancel} clicker={onClickCancel}/>
-						<Control image={watchLeague} clicker={onClickWatchLeague}/>
-						<Control image={settings} clicker={onClickSettings}/>
-						<Control image={minimize} clicker={onClickMinimize}/>
-						<Control image={close} clicker={onClickClose}/>
-					</div>
 					<Mate className='component' data='Duckiee'/>
 					<Mate className='component' data='Scarlett'/>
 					<Mate className='component' data='Destiny'/>
@@ -31,8 +32,6 @@ class App extends Component {
 					<Mate className='component' data='Megumi'/>
 				</div>
 				<div id='center'>
-					<div class='controls'>
-					</div>
 					<Opponent className='component' data='Warwick'/>
 					<Opponent className='component' data='Jarvan 4'/>
 					<Opponent className='component' data='Sejuani'/>
@@ -40,8 +39,6 @@ class App extends Component {
 					<Opponent className='component' data='Janna'/>
 				</div>
 				<div id='right'>
-					<div class='controls'>
-					</div>
 					<p id='dynamic-display'>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
 				</div>				
 			</div>
@@ -89,6 +86,49 @@ class Control extends Component{
 	}
 }
 
+class ControlLeague extends Component{
+	constructor(props){
+		super(props)
+		this.clicker = this.clicker.bind(this)
+		this.state = {watch:true}
+	}
+	render(){
+		let displayWatch = ''
+		let displayUnwatch = ''
+		if(this.state.watch){
+			displayWatch = {display:'inline'}
+			displayUnwatch = {display:'none'}
+		}
+		else {
+			displayWatch = {display:'none'}
+			displayUnwatch = {display:'inline'}
+		}
+
+		return(
+			<div>
+				<input className='control' type='image' src={watchLeague} 
+					onClick={this.clicker} style={displayWatch}/>
+				<input className='control' type='image' src={unwatchLeague} 
+					onClick={this.clicker} style={displayUnwatch}/>
+				<span className='control'> i will update you on messages received from the league client</span>
+			</div>
+		)
+	}
+	clicker(event){
+		if(this.state.watch){
+			ipcRenderer.send('watch-league')
+			this.setState(previous => {
+				return {watch:false}
+			})
+		} else{
+			ipcRenderer.send('unwatch-league')
+			this.setState(previous => {
+				return {watch:true}
+			})
+		}
+	}	
+}
+
 function onClickClose(){
 	ipcRenderer.send('close')
 }
@@ -99,14 +139,6 @@ function onClickMinimize(){
 
 function onClickSettings(){
 	ipcRenderer.send('settings')
-}
-
-function onClickWatchLeague(){
-	ipcRenderer.send('watch-league')
-}
-
-function onClickCancel(){
-	ipcRenderer.send('unwatch-league')
 }
 
 export default App;
