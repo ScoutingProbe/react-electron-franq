@@ -21,7 +21,7 @@ League of Legends client window size
   display:flex;
   flex-flow: row-reverse wrap;
   justify-content:flex-end;
-  border:1px solid yellow;
+  border:1px solid red;
   height:40px;
 }
 
@@ -29,16 +29,23 @@ League of Legends client window size
   display:flex;
   flex-flow: column;
   flex:15%;
+  border:1px solid blue;
 }
 
 #center{
   display:flex;
   flex-flow: column;
   flex:15%;
+  border:1px solid purple;
 }
 
 #right{
   flex:50%;
+  border:1px solid yellow;
+}
+
+#bans{
+  flex:100%;
 }
 
 .component{
@@ -51,15 +58,14 @@ League of Legends client window size
 }
 
 #dynamic-display{
-  padding:0px;
-  margin:0px;
-  border: 1px solid black;
 }
 
 .mate{
+  flex:1;
   border: 1px solid black;
 }
 
 .opponent{
+  flex:1;
   border: 1px solid black;
 }

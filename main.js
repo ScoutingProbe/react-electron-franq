@@ -9,7 +9,7 @@ const summonery = require('./util/summonery.js')
 
 const client = require('./league/client.js')
 
-const championMastery = require('./riotgames/championMastery.js')
+const championMastery = require('./riotgames/championMastery-riotgames.js')
 const champions = require('./riotgames/champions.js')
 const league = require('./riotgames/league.js')
 // const lolStaticData

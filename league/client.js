@@ -1,7 +1,7 @@
 const fs = require('fs')
 const Tail = require('tail').Tail
 const child_process = require('child_process')
-const championMastery = require('../league/championMastery.js')
+const championMastery = require('../league/championMastery-league.js')
 
 // C:\Riot Games\League of Legends
 // C:\Riot Games\League of Legends\Logs\LeagueClient Logs\2017-05-30T20-51-06_6672_LeagueClient.log
