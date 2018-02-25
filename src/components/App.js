@@ -50,7 +50,7 @@ class App extends Component {
 		]
 	}
 
-	static calculateState(){
+	static calculateState(prevState){
 		return{
 			language: LanguageStore.getState(),
 			region: RegionStore.getState(),

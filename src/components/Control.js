@@ -8,6 +8,10 @@ const electron = window.require('electron')
 const ipcRenderer  = electron.ipcRenderer;
 
 export default class Control extends Component{
+	componentDidMount(){
+		document.getElementById('settings').style.display = 'none'
+	}
+	
 	render(){
 		let clicker = null
 		let button = null
@@ -47,13 +51,17 @@ function onClickSettings(){
 	switch(document.getElementById('settings').style.display){
 		case 'none':
 			document.getElementById('settings').style.display = 'block'
-			break
-		case 'block':
-			document.getElementById('settings').style.display = 'none'
+			document.getElementById('bans').style.display = 'none'
+			document.getElementById('left').style.display = 'none'
+			document.getElementById('center').style.display = 'none'
+			document.getElementById('right').style.display = 'none'
 			break
 		default:
-			document.getElementById('settings').style.display = 'block'
-			break
+			document.getElementById('settings').style.display = 'none'
+			document.getElementById('bans').style.display = 'block'
+			document.getElementById('left').style.display = 'block'
+			document.getElementById('center').style.display = 'block'
+			document.getElementById('right').style.display = 'block'
 	}
 
 	ipcRenderer.send('settings')
