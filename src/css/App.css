@@ -9,17 +9,18 @@ League of Legends client window size
 
 /*root element*/
 #app{
-  height:720px;
+  height:600px;
   width:1280px;
   border:1px solid black;
   display:flex;
   flex-flow: row wrap;
+/*  align-content: flex-start;*/
 }
 
 #controls{
   flex:100%;
   display:flex;
-  flex-flow: row-reverse wrap;
+  flex-flow: row wrap;
   justify-content:flex-end;
   border:1px solid red;
   height:40px;
@@ -69,4 +70,9 @@ League of Legends client window size
 .opponent{
   flex:1;
   border: 1px solid black;
+}
+
+#settings{
+  display:flex;
+  flex-flow: column;
 }

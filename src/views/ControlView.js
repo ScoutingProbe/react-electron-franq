@@ -9,12 +9,12 @@ const ipcRenderer  = electron.ipcRenderer;
 export default function ControlView(props){
 	return(
 		<div>
-			<input className='control' type='image' src={close} 
-				alt='close' onClick={onClickClose}/>
-			<input className='control' type='image' src={minimize}
-				alt='minimize' onClick={onClickMinimize}/>
 			<input className='control' type='image' src={settings}
 				alt='settings' onClick={onClickSettings}/>
+			<input className='control' type='image' src={minimize}
+				alt='minimize' onClick={onClickMinimize}/>				
+			<input className='control' type='image' src={close} 
+				alt='close' onClick={onClickClose}/>			
 		</div>
 	)
 }

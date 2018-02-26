@@ -11,7 +11,7 @@ class LanguageStore extends ReduceStore{
 	}
 
 	reduce(state, action) {
-		return state
+		return action.language
 	}
 }
 

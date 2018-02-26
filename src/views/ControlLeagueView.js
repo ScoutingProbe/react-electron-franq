@@ -5,11 +5,11 @@ import unwatchLeague from '../png/cancel.png'
 export default function ControlLeagueView(props){
 	return(
 		<div>
+			<span className='control'> i will update you on messages received from the league client</span>
 			<input id='watch' className='control' type='image' src={watchLeague} 
 				onClick={watch} alt='watch'/>
 			<input id='unwatch' className='control' type='image' src={unwatchLeague} 
-				onClick={unwatch} style={{display:'none'}} alt='unwatch'/>
-			<span className='control'> i will update you on messages received from the league client</span>
+				onClick={unwatch} style={{display:'none'}} alt='unwatch'/>	
 		</div>
 	)
 }

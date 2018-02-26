@@ -1,35 +1,15 @@
-import React from 'react'
+import React, {Component} from 'react'
+import LanguageComponent from '../components/LanguageComponent.js'
 import $ from 'jquery'
 
 export default function SettingsView(props){
 	return(
 		<div style={{display:'none'}} id='settings'>
-			<Language {...props}/>
 			<Region {...props}/>
+			<LanguageComponent {...props}/>
 			<Save {...props}/>
 		</div>
 	)
-}
-
-function Save(props){
-	// let language = $('input[name=language]:checked').prop('id')
-	// let region = $('input[name=region]:checked').prop('id')
-
-	return (
-		<div>
-			<p>{props.language} {props.region}</p>
-			<input type='button' id='save' onClick={saveClicker} value='save'/>
-		</div>
-	)
-}
-
-function saveClicker(props){
-	console.log(props)
-	$('#settings').hide()
-	$('#bans').show()
-	$('#left').show()
-	$('#center').show()
-	$('#right').show()
 }
 
 function Language(props){
@@ -55,8 +35,10 @@ function Language(props){
 }
 
 function languageClicker(){
-	let language = $('input[name=language]:checked').id
+	console.log(this)
 }
+
+
 
 function Region(props){
 	return(
@@ -90,6 +72,26 @@ function Region(props){
 			<label>LA2</label>
 		</div>
 	)
+}
+
+function Save(props){
+	// let language = $('input[name=language]:checked').prop('id')
+	// let region = $('input[name=region]:checked').prop('id')
+
+	return (
+		<div>
+			<input type='button' id='save' onClick={saveClicker} value='save'/>
+			<span>{props.language} {props.region}</span>
+		</div>
+	)
+}
+
+function saveClicker(props){
+	$('#settings').hide()
+	$('#bans').show()
+	$('#left').show()
+	$('#center').show()
+	$('#right').show()
 }
 
 function componentDidMount(){
@@ -143,43 +145,5 @@ function componentDidMount(){
 			break
 		default:
 			$('#NA1').checked = true
-	}
-
-	switch(this.state.language){
-		default:
-			$('.en').show()
-			$('.kr').hide()
-			$('.cn').hide()
-			$('.sp').hide()
-			$('.po').hide()
-			break
-		case 'korean':
-			$('.en').hide()
-			$('.kr').show()
-			$('.cn').hide()
-			$('.sp').hide()
-			$('.po').hide()			
-			break
-		case 'chinese':
-			$('.en').hide()
-			$('.kr').hide()
-			$('.cn').show()
-			$('.sp').hide()
-			$('.po').hide()
-			break
-		case 'spanish':
-			$('.en').hide()
-			$('.kr').hide()
-			$('.cn').hide()
-			$('.sp').show()
-			$('.po').hide()
-			break
-		case 'portuguese':
-			$('.en').hide()
-			$('.kr').hide()
-			$('.cn').hide()
-			$('.sp').hide()
-			$('.po').show()
-			break
-	}		
+	}	
 }
