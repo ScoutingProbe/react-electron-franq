@@ -11,7 +11,10 @@ class LanguageStore extends ReduceStore{
 	}
 
 	reduce(state, action) {
-		return action.language
+		if(action.type === 'CHANGE_LANGUAGE')
+			return action.language
+		else 
+			return state
 	}
 }
 

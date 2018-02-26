@@ -15,6 +15,44 @@ class LanguageComponent extends Component{
 	}
 
 	languageChange(event){
+		switch(event.currentTarget.id){
+			default:
+				$('.en').show()
+				$('.kr').hide()
+				$('.cn').hide()
+				$('.sp').hide()
+				$('.po').hide()
+				break
+			case 'korean':
+				$('.en').hide()
+				$('.kr').show()
+				$('.cn').hide()
+				$('.sp').hide()
+				$('.po').hide()			
+				break
+			case 'chinese':
+				$('.en').hide()
+				$('.kr').hide()
+				$('.cn').show()
+				$('.sp').hide()
+				$('.po').hide()
+				break
+			case 'spanish':
+				$('.en').hide()
+				$('.kr').hide()
+				$('.cn').hide()
+				$('.sp').show()
+				$('.po').hide()
+				break
+			case 'portuguese':
+				$('.en').hide()
+				$('.kr').hide()
+				$('.cn').hide()
+				$('.sp').hide()
+				$('.po').show()
+				break
+		}
+
 		this.props.onChangeLanguage(event.currentTarget.id)
 	}
 

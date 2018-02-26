@@ -6,12 +6,6 @@ import LanguageStore from './stores/LanguageStore.js'
 import registerServiceWorker from './registerServiceWorker.js';
 import $ from 'jquery'
 
-// christian sepulveda hack
-// const electron = window.require('electron');
-// const fs = electron.remote.require('fs');
-// const ipcRenderer  = electron.ipcRenderer;
-// end hack
-
 window.require('electron-react-devtools').install()
 
 ReactDOM.render(<AppContainer />, document.getElementById('root'));
@@ -54,4 +48,6 @@ switch(LanguageStore.getState()){
 		$('.po').show()
 		break
 }
+
+
 
