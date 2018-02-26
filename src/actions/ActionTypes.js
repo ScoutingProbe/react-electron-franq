@@ -6,3 +6,5 @@ const ActionTypes = {
 	CHANGE_LANGUAGE: 'CHANGE_LANGUAGE',
 	CHANGE_REGION: 'CHANGE_REGION'
 }
+
+export default ActionTypes

@@ -1,7 +1,5 @@
 import {ReduceStore} from 'flux/utils'
 import Dispatcher from '../actions/Dispatcher.js'
-import RegionStore from '../stores/RegionStore.js'
-import ClientStore from '../stores/ClientStore.js'
 
 class LanguageStore extends ReduceStore{
 	constructor(){
@@ -13,7 +11,6 @@ class LanguageStore extends ReduceStore{
 	}
 
 	reduce(state, action) {
-		console.log(`languagestore ${state} ${action}`)
 		return state
 	}
 }
