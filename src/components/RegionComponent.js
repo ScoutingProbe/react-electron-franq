@@ -19,7 +19,6 @@ class RegionComponent extends Component{
 	}
 
 	render(){
-		let region = $('input[name=region]:checked').prop('id')
 		return(
 			<div id='region'>
 				<p className='en'>Enter region</p>
@@ -29,47 +28,47 @@ class RegionComponent extends Component{
 				<p className='po'>Inserir região</p>
 				<input type='radio' name='region' id='RU'
 						onChange={this.regionChange}
-						checked={region === 'RU'}/>
+						checked={this.props.region === 'RU'}/>
 				<label>RU</label>
 				<input type='radio' name='region' id='KR'
 						onChange={this.regionChange}
-						checked={region === 'KR'}/>
+						checked={this.props.region === 'KR'}/>
 				<label>KR</label>
 				<input type='radio' name='region' id='BR1'
 						onChange={this.regionChange}
-						checked={region === 'BR1'}/>
+						checked={this.props.region === 'BR1'}/>
 				<label>BR1</label>
 				<input type='radio' name='region' id='OC1'
 						onChange={this.regionChange}
-						checked={region === 'OC1'}/>
+						checked={this.props.region === 'OC1'}/>
 				<label>OC1</label>
 				<input type='radio' name='region' id='JP1'
 						onChange={this.regionChange}
-						checked={region === 'JP1'}/>
+						checked={this.props.region === 'JP1'}/>
 				<label>JP1</label>
 				<input type='radio' name='region' id='NA1'
 						onChange={this.regionChange}
-						checked={region === 'NA1'}/>
+						checked={this.props.region === 'NA1'}/>
 				<label>NA1</label>
 				<input type='radio' name='region' id='EUN1'
 						onChange={this.regionChange}
-						checked={region === 'EUN1'}/>
+						checked={this.props.region === 'EUN1'}/>
 				<label>EUN1</label>
 				<input type='radio' name='region' id='EUW1'
 						onChange={this.regionChange}
-						checked={region === 'EUW1'}/>
+						checked={this.props.region === 'EUW1'}/>
 				<label>EUW1</label>
 				<input type='radio' name='region' id='TR1'
 						onChange={this.regionChange}
-						checked={region === 'TR1'}/>
+						checked={this.props.region === 'TR1'}/>
 				<label>TR1</label>
 				<input type='radio' name='region' id='LA1'
 						onChange={this.regionChange}
-						checked={region === 'LA1'}/>
+						checked={this.props.region === 'LA1'}/>
 				<label>LA1</label>
 				<input type='radio' name='region' id='LA2'
 						onChange={this.regionChange}
-						checked={region === 'LA2'}/>
+						checked={this.props.region === 'LA2'}/>
 				<label>LA2</label>
 			</div>
 		)

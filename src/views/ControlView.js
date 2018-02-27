@@ -2,8 +2,9 @@ import React from 'react'
 
 import minimize from '../png/minimize.png'
 import close from '../png/close.png'
-const electron = window.require('electron')
-const ipcRenderer  = electron.ipcRenderer;
+
+// const electron = window.require('electron')
+// const ipcRenderer  = electron.ipcRenderer;
 
 export default function ControlView(props){
 	return(
@@ -17,9 +18,9 @@ export default function ControlView(props){
 }
 
 function onClickClose(){
-	ipcRenderer.send('close')
+	window.ipcRenderer.send('close')
 }
 
 function onClickMinimize(){
-	ipcRenderer.send('minimize')
+	window.ipcRenderer.send('minimize')
 }

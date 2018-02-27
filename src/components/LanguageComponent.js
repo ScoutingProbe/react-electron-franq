@@ -57,7 +57,6 @@ class LanguageComponent extends Component{
 	}
 
 	render(){
-		let language = $('input[name=language]:checked').prop('id')
 		return(
 			<div id='language'>
 				<p className='en'>Enter your language</p>
@@ -68,27 +67,27 @@ class LanguageComponent extends Component{
 
 				<input type='radio' name='language' id='english'
 				onChange={this.languageChange} 
-				checked={language === 'english'}/>
+				checked={this.props.language === 'english'}/>
 				<label>English</label>
 
 				<input type='radio' name='language' id='korean'
 				onChange={this.languageChange} 
-				checked={language === 'korean'}/>
+				checked={this.props.language === 'korean'}/>
 				<label>한국어</label>
 
 				<input type='radio' name='language' id='chinese' 
 				onChange={this.languageChange} 
-				checked={language === 'chinese'}/>
+				checked={this.props.language === 'chinese'}/>
 				<label>中文</label>
 
 				<input type='radio' name='language' id='spanish'
 				onChange={this.languageChange} 
-				checked={language === 'spanish'}/>
+				checked={this.props.language === 'spanish'}/>
 				<label>Español</label>
 
 				<input type='radio' name='language' id='portuguese'
 				onChange={this.languageChange} 
-				checked={language === 'portuguese'}/>
+				checked={this.props.language === 'portuguese'}/>
 				<label>Português</label>
 			</div>
 		)

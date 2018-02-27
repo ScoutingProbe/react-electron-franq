@@ -6,8 +6,6 @@ import LanguageStore from './stores/LanguageStore.js'
 import registerServiceWorker from './registerServiceWorker.js';
 import $ from 'jquery'
 
-window.require('electron-react-devtools').install()
-
 ReactDOM.render(<AppContainer />, document.getElementById('root'));
 registerServiceWorker();
 

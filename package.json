@@ -33,6 +33,7 @@
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-preset-flow": "^6.23.0",
+    "babel-preset-react": "^6.24.1",
     "electron-prebuilt-compile": "^1.8.2",
     "electron-react-devtools": "^0.5.3",
     "eslint-plugin-react": "^7.6.1",

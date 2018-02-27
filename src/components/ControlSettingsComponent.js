@@ -7,7 +7,7 @@ import ClientStore from '../stores/ClientStore.js'
 import settings from '../png/settings.png'
 import $ from 'jquery'
 
-class ControlSettingsComponent extends Component{
+export class ControlSettingsComponent extends Component{
 	constructor(props){
 		super(props)
 		this.props = props
