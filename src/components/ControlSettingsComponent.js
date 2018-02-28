@@ -7,7 +7,7 @@ import ClientStore from '../stores/ClientStore.js'
 import settings from '../png/settings.png'
 import $ from 'jquery'
 
-export class ControlSettingsComponent extends Component{
+class ControlSettingsComponent extends Component{
 	constructor(props){
 		super(props)
 		this.props = props
@@ -19,16 +19,16 @@ export class ControlSettingsComponent extends Component{
 			case 'none':
 				$('#settings').show()
 				$('#bans').hide()
-				$('#left').hide()
-				$('#center').hide()
-				$('#right').hide()
+				$('#my-team').hide()
+				$('#their-team').hide()
+				$('#display').hide()
 				break
 			default:
 				$('#settings').hide()
 				$('#bans').show()
-				$('#left').show()
-				$('#center').show()
-				$('#right').show()
+				$('#my-team').show()
+				$('#their-team').show()
+				$('#display').show()
 		}
 		let language = $('input[name=language]:checked').id
 		let region = $('input[name=region]:checked').id
@@ -45,9 +45,7 @@ export class ControlSettingsComponent extends Component{
 				alt='settings' onClick={this.onClickSettings}/>
 		)
 	}
-
-
-
+	
 	static getStores(){
 		return [
 			LanguageStore,

@@ -34,6 +34,7 @@ it('shows team mate selected champion')
 it('shows team mate mastery level with selected champion')
 it('shows team mate hovered champion')
 it('shows team mate mastery level with hovered champion')
+
 it('shows enemy selected champion')
 it('shows enemy hovered champion')
 

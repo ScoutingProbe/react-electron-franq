@@ -13,7 +13,7 @@ const Actions = {
 		})
 	},
 	goIndex(){
-		Dispatcher.dispathc({
+		Dispatcher.dispatch({
 			type: ActionTypes.GO_INDEX
 		})
 	},

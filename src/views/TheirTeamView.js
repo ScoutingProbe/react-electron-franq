@@ -1,14 +1,14 @@
 import React from 'react'
-import OpponentContainer from '../containers/OpponentContainer.js'
+import OpponentComponent from '../components/OpponentComponent.js'
 
 export default function TheirTeamView(props){
 	return (
-		<div id='center'>
-			<OpponentContainer className='component' data='Warwick'/>
-			<OpponentContainer className='component' data='Jarvan 4'/>
-			<OpponentContainer className='component' data='Sejuani'/>
-			<OpponentContainer className='component' data='Leona'/>
-			<OpponentContainer className='component' data='Janna'/>
+		<div id='their-team'>
+			<OpponentComponent {...props.client.theirTeam[0]}/>
+			<OpponentComponent {...props.client.theirTeam[1]}/>
+			<OpponentComponent {...props.client.theirTeam[2]}/>
+			<OpponentComponent {...props.client.theirTeam[3]}/>
+			<OpponentComponent {...props.client.theirTeam[4]}/>
 		</div>
 	)	
 }

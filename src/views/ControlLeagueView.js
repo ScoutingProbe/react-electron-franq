@@ -1,6 +1,7 @@
 import React from 'react'
 import watchLeague from '../png/league.png'
 import unwatchLeague from '../png/cancel.png'
+import $ from 'jquery'
 
 export default function ControlLeagueView(props){
 	return(
@@ -15,15 +16,11 @@ export default function ControlLeagueView(props){
 }
 
 function watch(){
-	document.getElementById('watch')
-		.style.display = 'none'
-	document.getElementById('unwatch')
-		.style.display = 'inline'
+	$('#watch').hide()
+	$('#unwatch').show()
 }
 
 function unwatch(){
-	document.getElementById('watch')
-		.style.display = 'inline'
-	document.getElementById('unwatch')
-		.style.display = 'none'
+	$('#watch').show()
+	$('#unwatch').hide()
 }

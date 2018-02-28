@@ -26,23 +26,21 @@ League of Legends client window size
 	height:40px;
 }
 
-#left{
+#my-team{
 	display:flex;
-	flex-flow: column;
-	flex:15%;
+	flex-flow: row;
+	flex:100%;
+}
+
+#their-team{
+	display:flex;
+	flex-flow: row;
+	flex:100%;
+}
+
+#display{
+	flex:100%;
 	border:1px solid blue;
-}
-
-#center{
-	display:flex;
-	flex-flow: column;
-	flex:15%;
-	border:1px solid purple;
-}
-
-#right{
-	flex:50%;
-	border:1px solid yellow;
 }
 
 #bans{
