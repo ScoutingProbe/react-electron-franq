@@ -4,7 +4,7 @@ import Actions from '../actions/Actions.js'
 import LanguageStore from '../stores/LanguageStore.js'
 import RegionStore from '../stores/RegionStore.js'
 import ClientStore from '../stores/ClientStore.js'
-import $ from 'jquery'
+import LolStaticDataStore from '../stores/LolStaticDataStore.js'
 
 class RegionComponent extends Component{
 	constructor(props){
@@ -78,7 +78,8 @@ class RegionComponent extends Component{
 		return [
 			LanguageStore,
 			RegionStore,
-			ClientStore
+			ClientStore,
+			LolStaticDataStore
 		]
 	}
 
@@ -87,6 +88,7 @@ class RegionComponent extends Component{
 			language: LanguageStore.getState(),
 			region: RegionStore.getState(),
 			client: ClientStore.getState(),
+			lolStaticData: LolStaticDataStore.getState(),
 			onWatch: Actions.watch,
 			onUnwatch: Actions.unwatch,
 			onGoIndex: Actions.goIndex,

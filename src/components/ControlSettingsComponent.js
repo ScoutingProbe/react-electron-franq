@@ -4,6 +4,7 @@ import Actions from '../actions/Actions.js'
 import LanguageStore from '../stores/LanguageStore.js'
 import RegionStore from '../stores/RegionStore.js'
 import ClientStore from '../stores/ClientStore.js'
+import LolStaticDataStore from '../stores/LolStaticDataStore.js'
 import settings from '../png/settings.png'
 import $ from 'jquery'
 
@@ -22,6 +23,7 @@ class ControlSettingsComponent extends Component{
 				$('#my-team').hide()
 				$('#their-team').hide()
 				$('#display').hide()
+				$('#recommend').hide()
 				break
 			default:
 				$('#settings').hide()
@@ -29,6 +31,7 @@ class ControlSettingsComponent extends Component{
 				$('#my-team').show()
 				$('#their-team').show()
 				$('#display').show()
+				$('#recommend').show()
 		}
 		let language = $('input[name=language]:checked').id
 		let region = $('input[name=region]:checked').id
@@ -50,7 +53,8 @@ class ControlSettingsComponent extends Component{
 		return [
 			LanguageStore,
 			RegionStore,
-			ClientStore
+			ClientStore,
+			LolStaticDataStore
 		]
 	}
 
@@ -59,6 +63,7 @@ class ControlSettingsComponent extends Component{
 			language: LanguageStore.getState(),
 			region: RegionStore.getState(),
 			client: ClientStore.getState(),
+			lolStaticData: LolStaticDataStore.getState(),
 			onWatch: Actions.watch,
 			onUnwatch: Actions.unwatch,
 			onGoIndex: Actions.goIndex,

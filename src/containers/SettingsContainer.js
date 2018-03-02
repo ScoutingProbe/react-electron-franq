@@ -2,11 +2,17 @@ import {Container} from 'flux/utils'
 import LanguageStore from '../stores/LanguageStore.js'
 import ClientStore from '../stores/ClientStore.js'
 import RegionStore from '../stores/RegionStore.js'
+import LolStaticDataStore from '../stores/LolStaticDataStore.js'
 import Actions from '../actions/Actions.js'
 import SettingsView from '../views/SettingsView.js'
 
 function getStores(){
-	return [LanguageStore, ClientStore, RegionStore]
+	return [
+		LanguageStore, 
+		RegionStore, 
+		ClientStore, 
+		LolStaticDataStore
+	]
 }
 
 function getState(){
@@ -14,6 +20,7 @@ function getState(){
 		language: LanguageStore.getState(),
 		region: RegionStore.getState(),
 		client: ClientStore.getState(),
+		lolStaticData: LolStaticDataStore.getState(),
 		onWatch: Actions.watch,
 		onUnwatch: Actions.unwatch,
 		onGoIndex: Actions.goIndex,

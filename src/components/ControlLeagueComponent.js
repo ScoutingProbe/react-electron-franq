@@ -5,19 +5,22 @@ import LanguageStore from '../stores/LanguageStore.js'
 import RegionStore from '../stores/RegionStore.js'
 import ClientStore from '../stores/ClientStore.js'
 import LolStaticDataStore from '../stores/LolStaticDataStore.js'
+import watchLeague from '../png/league.png'
+import unwatchLeague from '../png/cancel.png'
+import $ from 'jquery'
 
-class MateComponent extends Component{
-	constructor(props){
-		super(props)
-		this.props = props
-	}
+const electron = window.require('electron')
+const ipcRenderer  = electron.ipcRenderer
 
+class ControlLeagueComponent extends Component{
 	render(){
 		return(
-			<div className='opponent'>
-				<p>{this.props.championId === 0 ? '' : 'selected ' + this.props.championId} 
-					{this.props.championPickIntent === 0 ? '' : 'hovered ' + this.props.championPickIntent}
-				</p>
+			<div id='league'>	
+				<input id='watch' className='control' type='image' src={watchLeague} 
+					onClick={this.watch} alt='watch'/>
+				<input id='unwatch' className='control' type='image' src={unwatchLeague} 
+					onClick={this.unwatch} style={{display:'none'}} alt='unwatch'/>	
+				<span className='control'> i will update you on messages received from the league client</span>
 			</div>
 		)
 	}
@@ -45,6 +48,18 @@ class MateComponent extends Component{
 			onChangeRegion: Actions.changeRegion
 		}		
 	}
+
+	watch(){
+		$('#watch').hide()
+		$('#unwatch').show()
+	}
+
+	unwatch(){
+		$('#watch').show()
+		$('#unwatch').hide()
+	}	
 }
 
-export default Container.create(MateComponent)
+
+
+export default Container.create(ControlLeagueComponent)
