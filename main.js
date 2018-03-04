@@ -4,9 +4,7 @@ const url = require('url')
 const fs = require('fs')
 const child_process = require('child_process')
 
-const location = require('./util/location.js')
-const summonery = require('./util/summonery.js')
-
+const location = require('./league/location.js')
 const client = require('./league/client.js')
 
 const championMastery = require('./riotgames/championMastery-riotgames.js')
@@ -20,7 +18,6 @@ const summoner = require('./riotgames/summoner.js')
 // const thirdPartyCode
 // const tournamentStub
 // const tournament
-
 let win
 
 function createWindow() {
@@ -33,6 +30,7 @@ function createWindow() {
 	})
 	
 	win.loadURL(startUrl)
+	win.webContents.openDevTools()
 
 	win.on('closed', () => {
 		win = null
@@ -69,9 +67,6 @@ ipcMain.on('minimize', ()=>{
 	win.minimize()
 })
 
-ipcMain.on('settings', ()=>{
-	//send to settings router
-})
 
 ipcMain.on('watch-league', ()=>{
 	// start client up
@@ -79,6 +74,31 @@ ipcMain.on('watch-league', ()=>{
 
 ipcMain.on('unwatch-league', ()=>{
 	// end client
+})
+
+ipcMain.on('location', event => {
+	location.initial(win)
+		.then(val => event.sender.send('location-inform', val))
+		.catch(error => event.sender.send('location-inform', error))
+})
+
+ipcMain.on('most-games', () => {
+	// TODO
+})
+ipcMain.on('most-rank', () => {
+	// TODO
+})
+ipcMain.on('most-early-pick', () => {
+	// TODO
+})
+ipcMain.on('commend-mate', () => {
+	// TODO
+})
+ipcMain.on('commend-bans', () => {
+	// TODO
+})
+ipcMain.on('commend-picks', () => {
+	// TODO
 })
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -115,21 +135,6 @@ ipcMain.on('riotgames', (event, region, s)=>{
 // summonery champion cards
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
-
-ipcMain.on('summonery', (event, sortKey, lane, count)=>{
-	summonery.initial(win, sortKey, lane, count)
-})
-
-
-
-//////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////
-//location form
-//////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////
-ipcMain.on('location', (event, loc) => {
-	location.initial(win, loc)
-})
 
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////

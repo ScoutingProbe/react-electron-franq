@@ -4,7 +4,7 @@ import DisplayContainer from '../containers/DisplayContainer.js'
 import TheirTeamContainer from '../containers/TheirTeamContainer.js'
 import MyTeamContainer from '../containers/MyTeamContainer.js'
 import SettingsContainer from '../containers/SettingsContainer.js'
-import RecommendContainer from '../containers/RecommendContainer.js'
+import CommendComponent from '../components/CommendComponent.js'
 import ControlRiotComponent from '../components/ControlRiotComponent.js'
 import ControlLolcounterComponent from '../components/ControlLolcounterComponent.js'
 import ControlLeagueComponent from '../components/ControlLeagueComponent.js'
@@ -15,17 +15,17 @@ import '../css/App.css'
 export default function AppView(props){
 	return (
 		<div id='app'>
-			<div id='controls-left'>
+			<ControlLeagueComponent {...props}/>
+			<div id='controls-top-right'>
 				<ControlSettingsComponent/>
 				<ControlMinimizeCloseContainer/>				
 			</div>
-			<div id='controls-right'>
-				<ControlLeagueComponent/>
-				<ControlRiotComponent/>
+			<div id='controls-bottom'>
+				<ControlRiotComponent {...props}/>
 				<ControlLolcounterComponent/>			
 			</div>
 			<SettingsContainer/>
-			<RecommendContainer/>
+			<CommendComponent {...props}/>
 			<MyTeamContainer/>
 			<TheirTeamContainer/>
 			<DisplayContainer/>
@@ -33,3 +33,5 @@ export default function AppView(props){
 		</div>
 	)
 }
+
+

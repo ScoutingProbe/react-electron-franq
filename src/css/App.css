@@ -10,31 +10,44 @@ League of Legends client window size
 /*root element*/
 #app{
 	height:600px;
-	width:1280px;
+	width:1260px;
 	border:1px solid black;
 	display:flex;
 	flex-flow: row wrap;
   	align-content: flex-start;
 }
 
-#controls-left{
-	flex:100%;
+#controls-top-left{
+	flex:50%;
 	display:flex;
 	flex-flow: row wrap;
-	justify-content:flex-end;
+	justify-content:flex-start;
 	border:1px solid red;
 	height:40px;
 }
 
-#controls-right{
+#controls-top-right{
+	flex:49%;
+	display:flex;
+	justify-content:flex-end;
+	height:40px;
+	border:1px solid blue;
+}
+
+#controls-bottom{
 	flex:100%;
 	display:flex;
 	flex-flow: row wrap;
 	border:1px solid red;
 }
 
+.control{
+	width:40px;
+	height:40px;
+}
+
 #league{
-	flex:100%;
+	
 }
 
 #riot{
@@ -69,11 +82,6 @@ League of Legends client window size
 
 .component{
 	border:1px solid black;
-}
-
-.control{
-	width:40px;
-	height:40px;
 }
 
 #dynamic-display{

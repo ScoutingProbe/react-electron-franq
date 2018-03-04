@@ -1,24 +1,26 @@
 import React, {Component} from 'react'
 import {Container} from 'flux/utils'
-import Actions from '../actions/Actions.js'
-import LanguageStore from '../stores/LanguageStore.js'
-import RegionStore from '../stores/RegionStore.js'
-import ClientStore from '../stores/ClientStore.js'
-import LolStaticDataStore from '../stores/LolStaticDataStore.js'
+import {getStores, calculateState} from './utils.js'
 import riot from '../png/riot.jpg'
-import $ from 'jquery'
 
-const electron = window.require('electron')
-const ipcRenderer  = electron.ipcRenderer
+const {ipcRenderer} = window.require('electron')
 
 class ControlRiotComponent extends Component{
 	constructor(props){
 		super(props)
 		this.props = props
 		this.onClickRiot = this.onClickRiot.bind(this)
+		this.onClickRiot()
 	}
 
 	onClickRiot(){
+		ipcRenderer.send('most-mains', this.props.client.myTeam)
+		ipcRenderer.send('most-games', this.props.client.myTeam)
+		ipcRenderer.send('most-rank', this.props.client.myTeam)
+		ipcRenderer.send('most-early-pick', this.props.client.myTeam)
+		ipcRenderer.send('commend-mate', this.props.client.myTeam)
+		ipcRenderer.send('commend-bans', this.props.client.myTeam, this.props.client.actions)
+		ipcRenderer.send('commend-picks', this.props.client.myTeam, this.props.client.theirTeam, this.props.client.actions)
 	}
 
 	render(){
@@ -32,27 +34,11 @@ class ControlRiotComponent extends Component{
 	}
 	
 	static getStores(){
-		return [
-			LanguageStore,
-			RegionStore,
-			ClientStore,
-			LolStaticDataStore
-		]
+		return getStores()
 	}
 
 	static calculateState(previous){
-		return{
-			language: LanguageStore.getState(),
-			region: RegionStore.getState(),
-			client: ClientStore.getState(),
-			lolStaticData: LolStaticDataStore.getState(),
-			onWatch: Actions.watch,
-			onUnwatch: Actions.unwatch,
-			onGoIndex: Actions.goIndex,
-			onGoSettings: Actions.goSettings,
-			onChangeLanguage: Actions.changeLanguage,
-			onChangeRegion: Actions.changeRegion
-		}		
+		return calculateState(previous)
 	}
 
 }
