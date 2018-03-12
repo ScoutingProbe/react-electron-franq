@@ -27,6 +27,7 @@ export function getState(){
 		onGoIndex: Actions.goIndex,
 		onGoSettings: Actions.goSettings,
 		onChangeLanguage: Actions.changeLanguage,
-		onChangeRegion: Actions.changeRegion
+		onChangeRegion: Actions.changeRegion,
+		onInformLocation: Actions.informLocation
 	}		
 }

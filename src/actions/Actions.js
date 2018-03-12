@@ -33,6 +33,12 @@ const Actions = {
 			type: ActionTypes.CHANGE_REGION,
 			region
 		})
+	},
+	informLocation(location){
+		Dispatcher.dispatch({
+			type: ActionTypes.INFORM_LOCATION,
+			location
+		})
 	}
 }
 

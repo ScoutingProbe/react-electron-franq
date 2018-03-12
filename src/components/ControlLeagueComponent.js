@@ -8,10 +8,14 @@ import $ from 'jquery'
 const {ipcRenderer} = window.require('electron')
 
 class ControlLeagueComponent extends Component{
+	constructor(props){
+		super(props)
+		this.render = this.render.bind(this)
+	}
+
 	watch(){
 		$('#watch').hide()
 		$('#unwatch').show()
-		ipcRenderer.send('location')
 	}
 
 	unwatch(){
@@ -26,8 +30,8 @@ class ControlLeagueComponent extends Component{
 					onClick={this.watch} alt='watch'/>
 				<input id='unwatch' className='control' type='image' src={unwatchLeague} 
 					onClick={this.unwatch} style={{display:'none'}} alt='unwatch'/>	
-				<p id='league'>i will update you on messages received from the league client</p>
-			</div>
+				<p id='league'>I am looking at {this.props.location}</p>
+			</div>	
 		)
 	}
 

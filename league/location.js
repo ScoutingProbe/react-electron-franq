@@ -4,8 +4,6 @@ const fs = require('fs')
 
 module.exports.initial = function(win){
 	return new Promise((resolve,reject) => {
-
-
 		child_process.exec(`wmic logicaldisk get name`, (error, stdout, stderr) => {
 			if(error) 
 				reject(error)
@@ -24,60 +22,27 @@ module.exports.initial = function(win){
 							})
 							.slice(1, firstEmptyDriveIndex)
 
-			let riotLocation = ''
-			let missCount = 0
+			let homedir = os.homedir()
+			drives.push(homedir)
+			drives.push(homedir + '\\Saved Games')
+			drives.push(homedir + '\\Desktop')
+
+			let homeDrive = homedir.slice(0,2)
+			drives.push(homeDrive + '\\Program Files')
+			drives.push(homeDrive + '\\Program Files (x86)')
+
 			drives.map( drive => {
 				let uri = drive + '\\Riot Games'
 				fs.stat(uri, (error, stats) => {
-					if(error) {
+					if(error) 
 						console.log(`Riot Games not found in ${drive}`)
-						missCount++
-					}
 					else {
 						console.log(`Riot Games found in ${drive}`)
-						riotLocation = uri + '\\Riot Games\\League of Legends\\Logs\\LeagueClient Logs'
+						let riotLocation = uri + '\\Riot Games\\League of Legends\\Logs\\LeagueClient Logs'
 						resolve(riotLocation)
-					}
-
-					if(error && 
-						missCount === drives.length &&
-						riotLocation === ''){
-							let homedir = os.homedir()
-							let homeDrive = homedir.slice(0,2)
-							let program64 = homeDrive + '\\Program Files'
-							let program32 = homeDrive + '\\Program Files (x86)'
-
-							drives = new Array(program64, program32)
-
-							missCount = 0
-							drives.map( drive => {
-								uri = drive + '\\Riot Games'
-								fs.stat(uri, (error, stats) => {
-									if(error){
-										console.log(`Riot Games not found in ${drive}`)
-										missCount++
-									}
-									else {
-										console.log(`Riot Games found in ${drive}`)
-										riotLocation = uri + '\\Riot Games\\League of Legends\\Logs\\LeagueClient Logs'
-											resolve(riotLocation)
-									}
-
-									if(error && 
-										missCount === drives.length &&
-										riotLocation === '') {
-
-									}
-								})
-							})
-
 					}
 				})
 			})
 		})
 	})
 }
-
-module.exports.initial()
-.catch(error => console.log(error))
-.then()

@@ -1,5 +1,6 @@
 import {ReduceStore} from 'flux/utils'
 import Dispatcher from '../actions/Dispatcher.js'
+import Actions from '../actions/Actions.js'
 
 const {ipcRenderer} = window.require('electron')
 
@@ -11,15 +12,12 @@ class LocationStore extends ReduceStore{
 
 	getInitialState(){
 		ipcRenderer.on('location-inform', (event, location) => {
-			console.log(location)
-			return location
+			Actions.informLocation(location)
 		})
 	}
 
-	reduce(state, action) {
-		console.log(state)
-		console.log(action)
-		return state
+	reduce(action, state) {
+		return state.location
 	}
 }
 

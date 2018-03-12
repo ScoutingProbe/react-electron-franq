@@ -77,9 +77,9 @@ ipcMain.on('unwatch-league', ()=>{
 })
 
 ipcMain.on('location', event => {
-	location.initial(win)
-		.then(val => event.sender.send('location-inform', val))
-		.catch(error => event.sender.send('location-inform', error))
+	location.initial()
+		.catch( error => event.sender.send('location-inform', error) )
+		.then( value => event.sender.send('location-inform', value) )
 })
 
 ipcMain.on('most-games', () => {
