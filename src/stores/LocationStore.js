@@ -13,7 +13,9 @@ class LocationStore extends ReduceStore{
 	getInitialState(){
 		ipcRenderer.on('location-inform', (event, location) => {
 			Actions.informLocation(location)
+			ipcRenderer.send('client-watch', location)
 		})
+		return ''
 	}
 
 	reduce(action, state) {

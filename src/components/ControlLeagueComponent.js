@@ -11,16 +11,22 @@ class ControlLeagueComponent extends Component{
 	constructor(props){
 		super(props)
 		this.render = this.render.bind(this)
+		this.watch = this.watch.bind(this)
+		this.unwatch = this.unwatch.bind(this)
 	}
 
 	watch(){
 		$('#watch').hide()
 		$('#unwatch').show()
+		$('#league').text(`Watching ${this.props.location}`)
+		ipcRenderer.send('client-watch', this.props.location)
 	}
 
 	unwatch(){
 		$('#watch').show()
 		$('#unwatch').hide()
+		$('#league').text(`Stopped watching`)
+		ipcRenderer.send('client-unwatch', this.props.location)
 	}
 	
 	render(){
@@ -30,7 +36,7 @@ class ControlLeagueComponent extends Component{
 					onClick={this.watch} alt='watch'/>
 				<input id='unwatch' className='control' type='image' src={unwatchLeague} 
 					onClick={this.unwatch} style={{display:'none'}} alt='unwatch'/>	
-				<p id='league'>I am looking at {this.props.location}</p>
+				<p id='league'>Click to start watching for new league game</p>
 			</div>	
 		)
 	}

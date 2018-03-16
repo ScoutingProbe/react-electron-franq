@@ -9,7 +9,7 @@ League of Legends client window size
 
 /*root element*/
 #app{
-	height:600px;
+	height:1000px;
 	width:1260px;
 	border:1px solid black;
 	display:flex;
@@ -18,7 +18,7 @@ League of Legends client window size
 }
 
 #controls-top-left{
-	flex:50%;
+	flex:80%;
 	display:flex;
 	flex-flow: row wrap;
 	justify-content:flex-start;
@@ -27,7 +27,7 @@ League of Legends client window size
 }
 
 #controls-top-right{
-	flex:49%;
+	flex:19%;
 	display:flex;
 	justify-content:flex-end;
 	height:40px;
@@ -70,31 +70,25 @@ League of Legends client window size
 	flex:100%;
 }
 
-#display{
-	flex:100%;
-	border:1px solid blue;
-}
-
 #bans{
 	flex:100%;
-	border:1px solid green;
+	display:flex;
+	flex-flow: row;
 }
 
-.component{
-	border:1px solid black;
-}
+.ban{
+	flex:1;
 
-#dynamic-display{
 }
 
 .mate{
 	flex:1;
-	border: 1px solid black;
+
 }
 
 .opponent{
 	flex:1;
-	border: 1px solid black;
+
 }
 
 #settings{

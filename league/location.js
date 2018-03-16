@@ -2,7 +2,7 @@ const os = require('os')
 const child_process = require('child_process')
 const fs = require('fs')
 
-module.exports.initial = function(win){
+module.exports.initial = function(){
 	return new Promise((resolve,reject) => {
 		child_process.exec(`wmic logicaldisk get name`, (error, stdout, stderr) => {
 			if(error) 

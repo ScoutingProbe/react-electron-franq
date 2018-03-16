@@ -39,6 +39,12 @@ const Actions = {
 			type: ActionTypes.INFORM_LOCATION,
 			location
 		})
+	},
+	informMastery(mastery){
+		Dispatcher.dispatch({
+			type: ActionTypes.INFORM_MASTERY,
+			mastery
+		})
 	}
 }
 

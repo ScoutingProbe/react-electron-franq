@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import {Container} from 'flux/utils'
 import {getStores, calculateState} from './utils.js'
 
-class MateComponent extends Component{
+class OpponentComponent extends Component{
 	constructor(props){
 		super(props)
 		this.props = props
@@ -11,8 +11,9 @@ class MateComponent extends Component{
 	render(){
 		return(
 			<div className='opponent'>
-				<p>{this.props.championId === 0 ? '' : 'selected ' + this.props.championId} 
-					{this.props.championPickIntent === 0 ? '' : 'hovered ' + this.props.championPickIntent}
+				<p>
+					{this.props.championId === 0 ? '' : 'selected ' + this.state.lolStaticData.getChampionName(this.props.championId)} 
+					{this.props.championPickIntent === 0 ? '' : 'hovered ' + this.state.lolStaticData.getChampionName(this.props.championPickIntent)}
 				</p>
 			</div>
 		)
@@ -27,4 +28,4 @@ class MateComponent extends Component{
 	}
 }
 
-export default Container.create(MateComponent)
+export default Container.create(OpponentComponent)

@@ -26,10 +26,9 @@ export default function AppView(props){
 			</div>
 			<SettingsContainer/>
 			<CommendComponent {...props}/>
+			<BansContainer/>
 			<MyTeamContainer/>
 			<TheirTeamContainer/>
-			<DisplayContainer/>
-			<BansContainer/>
 		</div>
 	)
 }

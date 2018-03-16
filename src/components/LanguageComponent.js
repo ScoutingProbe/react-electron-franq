@@ -12,6 +12,8 @@ class LanguageComponent extends Component{
 	}
 
 	languageChange(event){
+		console.log(event.currentTarget.id)
+		console.log(this.props.onChangeLanguage)
 		switch(event.currentTarget.id){
 			default:
 				$('.en').show()

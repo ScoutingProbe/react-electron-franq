@@ -4,21 +4,21 @@ import Actions from '../actions/Actions.js'
 
 const {ipcRenderer} = window.require('electron')
 
-class ClientStore extends ReduceStore{
+class MasteryStore extends ReduceStore{
 	constructor(){
 		super(Dispatcher)
 	}
 
 	getInitialState(){
-		ipcRenderer.on('client-inform', (event, client) => {
-			Actions.informClient(client)
+		ipcRenderer.on('mastery-inform', (event, mastery) => {
+			Actions.informMastery(mastery)
 		})
 		return ''
 	}
 
-	reduce(state, action){
+	reduce(action, state) {
 		return state
 	}
 }
 
-export default new ClientStore()
+export default new MasteryStore()
