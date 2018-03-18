@@ -18,8 +18,11 @@ class LocationStore extends ReduceStore{
 		return ''
 	}
 
-	reduce(action, state) {
-		return state.location
+	reduce(state, action) {
+		if(action.type === 'INFORM_LOCATION')
+			return action.location
+		else 
+			return state
 	}
 }
 

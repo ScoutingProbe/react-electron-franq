@@ -25,47 +25,47 @@ class RegionComponent extends Component{
 				<input type='radio' name='region' id='RU'
 						onChange={this.regionChange}
 						checked={this.props.region === 'RU'}/>
-				<label>RU</label>
+				<label htmlFor='RU'>RU</label>
 				<input type='radio' name='region' id='KR'
 						onChange={this.regionChange}
 						checked={this.props.region === 'KR'}/>
-				<label>KR</label>
+				<label htmlFor='KR'>KR</label>
 				<input type='radio' name='region' id='BR1'
 						onChange={this.regionChange}
 						checked={this.props.region === 'BR1'}/>
-				<label>BR1</label>
+				<label htmlFor='BR1'>BR1</label>
 				<input type='radio' name='region' id='OC1'
 						onChange={this.regionChange}
 						checked={this.props.region === 'OC1'}/>
-				<label>OC1</label>
+				<label htmlFor='OC1'>OC1</label>
 				<input type='radio' name='region' id='JP1'
 						onChange={this.regionChange}
 						checked={this.props.region === 'JP1'}/>
-				<label>JP1</label>
+				<label htmlFor='JP1'>JP1</label>
 				<input type='radio' name='region' id='NA1'
 						onChange={this.regionChange}
 						checked={this.props.region === 'NA1'}/>
-				<label>NA1</label>
+				<label htmlFor='NA1'>NA1</label>
 				<input type='radio' name='region' id='EUN1'
 						onChange={this.regionChange}
 						checked={this.props.region === 'EUN1'}/>
-				<label>EUN1</label>
+				<label htmlFor='EUN1'>EUN1</label>
 				<input type='radio' name='region' id='EUW1'
 						onChange={this.regionChange}
 						checked={this.props.region === 'EUW1'}/>
-				<label>EUW1</label>
+				<label htmlFor='EUW1'>EUW1</label>
 				<input type='radio' name='region' id='TR1'
 						onChange={this.regionChange}
 						checked={this.props.region === 'TR1'}/>
-				<label>TR1</label>
+				<label htmlFor='TR1'>TR1</label>
 				<input type='radio' name='region' id='LA1'
 						onChange={this.regionChange}
 						checked={this.props.region === 'LA1'}/>
-				<label>LA1</label>
+				<label htmlFor='LA1'>LA1</label>
 				<input type='radio' name='region' id='LA2'
 						onChange={this.regionChange}
 						checked={this.props.region === 'LA2'}/>
-				<label>LA2</label>
+				<label htmlFor='LA2'>LA2</label>
 			</div>
 		)
 	}
