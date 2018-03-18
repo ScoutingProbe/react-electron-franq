@@ -11,7 +11,6 @@ class ClientStore extends ReduceStore{
 
 	getInitialState(){
 		ipcRenderer.on('client-inform', (event, client) => {
-			Actions.informClient(client)
 		})
 		return ''
 	}

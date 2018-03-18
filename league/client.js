@@ -23,22 +23,22 @@ module.exports.initial = function initial(win, location){
 				( event.includes('change') || event.includes('rename') ) ) {
 					let path = `${location}\\\\${file}`
 
-					let path2 = path.replace(/\\\\/g, '//')
+					let powershell_path = path.replace(/\\\\/g, '/')
+					console.log(powershell_path)
+					console.log(typeof powershell_path)
 
-					path2 = 'E:\\Riot Games\\League of Legends\\Logs\\LeagueClient Logs\\2018-03-15T18-45-32_26288_LeagueClient.log'
 
-
-					let child = child_process.spawn('powershell.exe', ['./notepadInterval.ps1'])
-					child.stdout.on("data",function(data){
-						console.log("Powershell Data: " + data);
-					});
-					child.stderr.on("data",function(data){
-						console.log("Powershell Errors: " + data);
-					});
-					child.on("exit",function(){
-						console.log("Powershell Script finished");
-					});
-					child.stdin.end(); //end input
+					// let child = child_process.spawn('powershell.exe', ['./notepadInterval.ps1', '-location', powershell_path])
+					// child.stdout.on("data",function(data){
+					// 	console.log("Powershell Data: " + data);
+					// });
+					// child.stderr.on("data",function(data){
+					// 	console.log("Powershell Errors: " + data);
+					// });
+					// child.on("exit",function(){
+					// 	console.log("Powershell Script finished");
+					// });
+					// child.stdin.end(); //end input
 
 					let tail = new Tail(path)
 					tail.on('error', error => console.log(error) )
