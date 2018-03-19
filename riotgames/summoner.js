@@ -3,7 +3,7 @@
 // /lol/summoner/v3/summoners/{summonerId}
 const https = require('https')
 const fs = require('fs')
-const dry = require('../back/dry.js')
+const dry = require('../util/dry.js')
 
 module.exports.initial = function initial(win, region, summoner){
 	return new Promise((resolve,reject)=>{

@@ -1,23 +1,49 @@
 {
-  "name": "pickban",
-  "version": "1.0.0",
-  "description": "Pick Ban is a desktop application that utilizes Riot Games developer portal, game logs, championselect.net, and op.gg to provide a tool that aids in the draft phase of ranked League of Legends games.  ",
-  "repository": "https://github.com/andrewSRahn/pickban",
-  "main": "main.js",
-  "scripts": {
-    "test": "mocha"
-  },
-  "author": "andrewsrahn@gmail.com",
-  "license": "MIT",
-  "devDependencies": {
-    "cheerio": "^1.0.0-rc.2",
-    "colors.css": "^3.0.0",
+  "name": "lolpick",
+  "version": "0.0.1",
+  "description": "lolpick is an Electron based node.js application with react.  It's op.",
+  "repository": "https://github.com/andrewSRahn/lolpick",
+  "private": true,
+  "dependencies": {
+    "create-react-class": "^15.6.3",
     "electron": "^1.6.11",
-    "electron-prebuilt-compile": "^1.8.2-beta.3",
-    "jquery": "^3.2.1",
-    "mocha": "^3.5.0",
+    "flux": "^3.1.3",
+    "immutable": "^3.8.2",
+    "jquery": "^3.3.1",
+    "kill-port": "^1.1.0",
+    "prop-types": "^15.6.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
+    "react-redux": "^5.0.7",
+    "react-scripts": "1.1.0",
+    "redux": "^3.7.2",
+    "redux-electron-ipc": "^1.1.12",
     "tail": "^1.2.3"
+  },
+  "scripts": {
+    "start": "nf start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "electron": "electron .",
+    "electron-start": "node electron-wait-react.js",
+    "react-start": "react-scripts start",
+    "flow-build": "babel src/ -d lib/",
+    "prepublish": "npm run build",
+    "flow": "flow"
+  },
+  "main": "main.js",
+  "homepage": "./",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-flow": "^6.23.0",
+    "babel-preset-react": "^6.24.1",
+    "electron-prebuilt-compile": "^1.8.2",
+    "electron-react-devtools": "^0.5.3",
+    "eslint-plugin-react": "^7.6.1",
+    "flow-bin": "^0.66.0",
+    "foreman": "^2.0.0",
+    "webpack": "^3.6.0",
+    "webpack-cli": "^2.0.9"
   }
 }

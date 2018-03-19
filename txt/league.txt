@@ -1,1 +1,0 @@
-[{"leagueId":"5b900d40-c9aa-11e7-905a-c81f66cf135e","leagueName":"Mordekaiser's Snipers","tier":"PLATINUM","queueType":"RANKED_SOLO_5x5","rank":"III","playerOrTeamId":"24481735","playerOrTeamName":"Duckiee","leaguePoints":40,"wins":608,"losses":609,"veteran":true,"inactive":false,"freshBlood":false,"hotStreak":false}]

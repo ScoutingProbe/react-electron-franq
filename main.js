@@ -2,17 +2,12 @@ const {app, BrowserWindow, globalShortcut, ipcMain} = require('electron')
 const path = require('path')
 const url = require('url')
 const fs = require('fs')
+const child_process = require('child_process')
 
-
-const location = require('./back/location.js')
-const summonery = require('./back/summonery.js')
-
+const location = require('./league/location.js')
 const client = require('./league/client.js')
 
-const lolcounter = require('./lolcounter/lolcounter.js')
-const lolcounterRetry = require('./lolcounter/lolcounterRetry.js')
-
-const championMastery = require('./riotgames/championMastery.js')
+const championMastery = require('./riotgames/championMastery-riotgames.js')
 const champions = require('./riotgames/champions.js')
 const league = require('./riotgames/league.js')
 // const lolStaticData
@@ -23,16 +18,19 @@ const summoner = require('./riotgames/summoner.js')
 // const thirdPartyCode
 // const tournamentStub
 // const tournament
-
 let win
 
 function createWindow() {
-	win = new BrowserWindow({width: 1000, height: 850})
-	win.loadURL(url.format({
-		pathname: path.join(__dirname, '/front/match.html'),
+	win = new BrowserWindow({width: 1280, height: 850, frame:false})
+	
+	const startUrl = process.env.ELECTRON_START_URL || url.format({
+		pathname: path.join(__dirname, '/../build/index.html'),
 		protocol: 'file:',
 		slashes: true
-	}))
+	})
+	
+	win.loadURL(startUrl)
+	win.webContents.openDevTools()
 
 	win.on('closed', () => {
 		win = null
@@ -46,7 +44,9 @@ app.on('activate', () => {
 })
 
 app.on('window-all-closed', () => {
-	app.quit()
+	child_process.exec('taskkill /f /im node.exe', () => {
+		app.quit()
+	})
 })
 
 app.on('ready', createWindow)
@@ -55,6 +55,57 @@ app.on('ready', () => {
 	globalShortcut.register('F5', () => {
 		console.log('f5 pressed')
 	})
+})
+
+ipcMain.on('close', () =>{
+	child_process.exec('taskkill /f /im node.exe', () => {
+		app.quit()
+	})
+})
+
+ipcMain.on('minimize', ()=>{
+	win.minimize()
+})
+
+
+//////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+// league of legends client
+//////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+ipcMain.on('location', event => {
+	location.initial()
+		.catch( error => event.sender.send('location-inform', error) )
+		.then( value => event.sender.send('location-inform', value) )
+})
+
+ipcMain.on('client-watch', (event, location)=>{
+	client.initial(win, location)
+		.catch( error => event.sender.send('client-message', error) )
+		.then( value => event.sender.send('client-inform', value) )
+})
+
+ipcMain.on('client-unwatch', (event, location)=>{
+	// end client
+})
+
+ipcMain.on('most-games', () => {
+	// TODO
+})
+ipcMain.on('most-rank', () => {
+	// TODO
+})
+ipcMain.on('most-early-pick', () => {
+	// TODO
+})
+ipcMain.on('commend-mate', () => {
+	// TODO
+})
+ipcMain.on('commend-bans', () => {
+	// TODO
+})
+ipcMain.on('commend-picks', () => {
+	// TODO
 })
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -85,9 +136,6 @@ ipcMain.on('riotgames', (event, region, s)=>{
 // lolcounter form
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
-ipcMain.on('lolcounter', event=>{
-	lolcounter.initial(win)
-})
 
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
@@ -95,29 +143,5 @@ ipcMain.on('lolcounter', event=>{
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 
-ipcMain.on('summonery', (event, sortKey, lane, count)=>{
-	summonery.initial(win, sortKey, lane, count)
-})
 
-ipcMain.on('lolcounter-retry', (event, id, relation, lane, slice)=>{
-	lolcounterRetry.initial(win, id, relation, lane, slice)
-})
 
-//////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////
-//location form
-//////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////
-ipcMain.on('location', (event, loc) => {
-	location.initial(win, loc)
-})
-
-//////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////
-// league of legends client
-//////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////
-
-ipcMain.on('client', (event, loc)=>{
-	client.initial(new Array(win, loc, 0))
-})

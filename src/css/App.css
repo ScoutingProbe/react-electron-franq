@@ -1,0 +1,99 @@
+/*
+League of Legends client window size
+1920 x 1080
+1600 x 900
+1280 x 720
+1024 x 576
+
+*/
+
+/*root element*/
+#app{
+	height:1000px;
+	width:1260px;
+	border:1px solid black;
+	display:flex;
+	flex-flow: row wrap;
+  	align-content: flex-start;
+}
+
+#controls-top-left{
+	flex:80%;
+	display:flex;
+	flex-flow: row wrap;
+	justify-content:flex-start;
+	border:1px solid red;
+	height:40px;
+}
+
+#controls-top-right{
+	flex:19%;
+	display:flex;
+	justify-content:flex-end;
+	height:40px;
+	border:1px solid blue;
+}
+
+#controls-bottom{
+	flex:100%;
+	display:flex;
+	flex-flow: row wrap;
+	border:1px solid red;
+}
+
+.control{
+	width:40px;
+	height:40px;
+}
+
+#league{
+	
+}
+
+#riot{
+	flex:100%;
+}
+
+#lolcounter{
+	flex:100%;
+}
+
+#my-team{
+	display:flex;
+	flex-flow: row;
+	flex:100%;
+}
+
+#their-team{
+	display:flex;
+	flex-flow: row;
+	flex:100%;
+}
+
+#bans{
+	flex:100%;
+	display:flex;
+	flex-flow: row;
+}
+
+.ban{
+	flex:1;
+
+}
+
+.mate{
+	flex:1;
+
+}
+
+.opponent{
+	flex:1;
+
+}
+
+#settings{
+	display:flex;
+	flex:100%;
+	flex-flow: column wrap;
+	border: 1px solid purple;
+}

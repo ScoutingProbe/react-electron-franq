@@ -1,6 +1,6 @@
 const https = require('https')
 const fs = require('fs')
-const dry = require('../back/dry.js')
+const dry = require('../util/dry.js')
 
 module.exports.initial = function(a){
 	return new Promise((resolve,reject)=>{

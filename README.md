@@ -1,10 +1,18 @@
-#pickban
+Lolpick
 
-A little about me.  I play at least one ranked League of Legends game every day; I have been playing League since season 2;  I am a jungle main, support secondary.  It is 2017 now; I use op.gg stats to pick my primary champions.  Currently, my primary champions are:  Warwick, Nunu, Amumu, Soraka, Sona, and Janna.
+This is an application that recommends draft choices for league of legends games.  Data sources include Riot Games API, lolcounter.com, and League of Legends log files.  
 
-Picks and bans is tedious for me because I access two webpages to help me.  I use championselect.net to find champion counters.  I use op.gg to check enemy and team profiles.  Lolwiz inspires me but I think they missed an important step of the game:  draft phase.  I want to write a desktop app that scrapes relevant data from those two webpages and reacts to the League client.  PickBan is designed to be the only tool you need for draft phase.  Op.gg is awesome; Championselect is equally awesome.  I think I can pull meaningful information for summoners to use during draft phase.
+Pending approval from Riot Games.
+Pending approval from Electron.
 
-I intend to release an alpha as soon as possible.  Check out my webpage at andrewsrahn.com if you want to get in touch with me; My contact information is in the footer.  
+Download, extract, then run application
+https://s3-us-west-1.amazonaws.com/pickban.andrewsrahn.com/lolpick+1.0.zip
 
-glhf
-- Duckiee, NA 
+
+node.js, Electron, React, node foreman, Flux, Mongo node
+
+git clone https://github.com/andrewsrahn/lolpick.git
+
+cd lolpick
+npm install
+npm start
