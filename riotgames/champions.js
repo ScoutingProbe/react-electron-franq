@@ -1,6 +1,7 @@
 const fs = require('fs')
 const https = require ('https')
-const dry = require('../util/dry.js')
+const dry = require('./util.js')
+const key = require('./key.js')
 
 module.exports.initial = function(a){
 	return new Promise((resolve,reject)=>{
@@ -26,7 +27,7 @@ function requestChampions(a){
 		const header = {	
 							"Origin": null,
 							"Accept-Charset": "application/x-www-form-urlencoded; charset=UTF-8",
-							"X-Riot-Token": dry.RIOT_DEVELOPER_KEY,
+							"X-Riot-Token": key.RIOT_DEVELOPER_KEY,
 							"Accept-Language": "en-US,en;q=0.5",
 						}
 

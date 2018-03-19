@@ -1,4 +1,5 @@
-const dry = require('../util/dry.js')
+const dry = require('./util.js')
+const key = require('./key.js')
 const https = require('https')
 const fs = require('fs')
 
@@ -25,7 +26,7 @@ function requestMatch(a){
 		const header = {	
 							"Origin": null,
 							"Accept-Charset": "application/x-www-form-urlencoded; charset=UTF-8",
-							"X-Riot-Token": dry.RIOT_DEVELOPER_KEY,
+							"X-Riot-Token": key.RIOT_DEVELOPER_KEY,
 							"Accept-Language": "en-US,en;q=0.5",
 						}
 
