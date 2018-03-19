@@ -1,3 +1,18 @@
-About:  Picks and bans is tedious because I access two webpages every game.  I use http://lolcounter.com to find champion counters. I use http://op.gg to check enemy and team profiles. It would be easier if there was one page I could go to for each League game.  Lolpick blends the webpages together into one desktop application.  I like winning, you probably like winning too.  Let's get some lp.  glhf
+Lolpick
 
-Release:  I intend to release this by June of 2018. Check out my webpage at http://andrewsrahn.com if you want to get in touch with me; My contact information is in the footer.  I will put up a website at http://lolpick.gg soon...
+This is an application that recommends draft choices for league of legends games.  Data sources include Riot Games API, lolcounter.com, and League of Legends log files.  
+
+Pending approval from Riot Games.
+Pending approval from Electron.
+
+Download, extract, then run application
+https://s3-us-west-1.amazonaws.com/pickban.andrewsrahn.com/lolpick+1.0.zip
+
+
+node.js, Electron, React, node foreman, Flux, Mongo node
+
+git clone https://github.com/andrewsrahn/lolpick.git
+
+cd lolpick
+npm install
+npm start
