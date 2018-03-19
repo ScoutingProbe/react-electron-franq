@@ -11,8 +11,4 @@ https://s3-us-west-1.amazonaws.com/pickban.andrewsrahn.com/lolpick+1.0.zip
 
 node.js, Electron, React, node foreman, Flux, Mongo node
 
-git clone https://github.com/andrewsrahn/lolpick.git
-
-cd lolpick
-npm install
-npm start
+I actually cannot let others run this on their machines due to API key security.  You are welcome to creep or paste.  I need to get a website up and running with a comment section for feedback...
